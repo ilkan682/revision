@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -29,83 +30,98 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; }
 
-  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 20px 32px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
-  .logo { background: var(--green); color: #000; font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 6px; font-family: var(--mono); }
-  header h1 { font-size: 16px; font-weight: 600; color: var(--text); }
-  header span { color: var(--muted); font-size: 13px; }
+  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 200; }
+  .logo { background: var(--green); color: #000; font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 6px; font-family: var(--mono); flex-shrink: 0; }
+  header h1 { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hamburger { display: none; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 18px; flex-shrink: 0; }
 
-  .layout { display: flex; min-height: calc(100vh - 57px); }
+  .layout { display: flex; min-height: calc(100vh - 49px); }
 
-  nav { width: 240px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 57px; height: calc(100vh - 57px); overflow-y: auto; }
-  nav .nav-group { padding: 0 12px 16px; }
-  nav .nav-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 8px 6px; }
-  nav a { display: block; padding: 5px 8px; border-radius: 6px; text-decoration: none; color: var(--muted); font-size: 13px; transition: all .15s; }
+  nav { width: 220px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); padding: 16px 0; position: sticky; top: 49px; height: calc(100vh - 49px); overflow-y: auto; }
+  nav .nav-group { padding: 0 10px 14px; }
+  nav .nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 8px 6px; }
+  nav a { display: block; padding: 5px 8px; border-radius: 6px; text-decoration: none; color: var(--muted); font-size: 12px; transition: all .15s; }
   nav a:hover { background: var(--bg3); color: var(--text); }
   nav a.mine { color: var(--green); }
   nav a.mine:hover { background: var(--green-bg); }
   nav a.other { color: var(--blue); }
   nav a.other:hover { background: var(--blue-bg); }
+  nav a.mysql { color: #ff9800; }
+  nav a.mysql:hover { background: #2a1800; }
 
-  main { flex: 1; padding: 32px; max-width: 900px; }
+  main { flex: 1; padding: 24px 20px; max-width: 900px; min-width: 0; }
 
-  .section { margin-bottom: 48px; scroll-margin-top: 80px; }
+  .section { margin-bottom: 48px; scroll-margin-top: 68px; }
   .section-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
   .tag-mine { background: var(--green-bg); color: var(--green); border: 1px solid #1a4d2e; }
   .tag-other { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
-  .section h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .tag-mysql { background: #2a1800; color: #ff9800; border: 1px solid #5a3800; }
+  .section h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
   .section .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
   .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-  .code-header { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
-  .code-filename { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .code-header { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 8px 14px; }
+  .code-filename { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .code-filename span { color: var(--text); }
-  .code-body { overflow-x: auto; }
+  .code-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  table.code-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
+  table.code-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
   table.code-table tr { border-bottom: 1px solid #1a1f27; }
   table.code-table tr:last-child { border-bottom: none; }
   table.code-table tr:hover { background: #1a2030; }
-  table.code-table td.ln { width: 44px; text-align: right; padding: 4px 12px 4px 8px; color: #404858; user-select: none; border-right: 1px solid var(--border); vertical-align: top; }
-  table.code-table td.code { padding: 4px 16px; white-space: pre; color: var(--text); vertical-align: top; }
-  table.code-table td.expl { padding: 4px 16px 4px 12px; color: var(--muted); font-family: var(--sans); font-size: 12px; border-left: 1px solid var(--border); min-width: 260px; max-width: 340px; vertical-align: top; line-height: 1.5; }
+  table.code-table td.ln { width: 36px; text-align: right; padding: 4px 10px 4px 6px; color: #404858; user-select: none; border-right: 1px solid var(--border); vertical-align: top; font-size: 11px; }
+  table.code-table td.code { padding: 4px 12px; white-space: pre; color: var(--text); vertical-align: top; }
+  table.code-table td.expl { padding: 4px 12px 4px 10px; color: var(--muted); font-family: var(--sans); font-size: 11.5px; border-left: 1px solid var(--border); min-width: 200px; max-width: 300px; vertical-align: top; line-height: 1.5; }
   table.code-table td.expl .tag { display: inline-block; font-size: 10px; font-family: var(--mono); padding: 1px 5px; border-radius: 4px; margin-bottom: 2px; }
   .tag-key { background: #2a1f00; color: var(--yellow); }
   .tag-imp { background: var(--red-bg); color: var(--red); }
   .tag-tip { background: var(--purple-bg); color: var(--purple); }
 
-  /* syntax highlight classes */
-  .kw { color: #ff7b72; }   /* keywords: from, import, if, def, class, return */
-  .fn { color: #d2a8ff; }   /* function names */
-  .str { color: #a5d6ff; }  /* strings */
-  .cmt { color: #8b949e; font-style: italic; } /* comments */
-  .cls { color: #ffa657; }  /* class names */
-  .dj { color: #79c0ff; }   /* django template tags */
-  .num { color: #f0883e; }  /* numbers */
-  .op { color: #ff7b72; }   /* operators */
-  .var { color: var(--text); } /* variables */
-  .attr { color: #79c0ff; }  /* attributes */
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cmt { color: #8b949e; font-style: italic; }
+  .cls { color: #ffa657; }
+  .dj { color: #79c0ff; }
+  .num { color: #f0883e; }
+  .op { color: #ff7b72; }
+  .var { color: var(--text); }
+  .attr { color: #79c0ff; }
+  .sql-kw { color: #ff7b72; }
+  .sql-val { color: #a5d6ff; }
+  .sql-cmt { color: #8b949e; font-style: italic; }
+  .sql-fn { color: #d2a8ff; }
 
   .qa-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
-  .qa-q { padding: 12px 16px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; }
+  .qa-q { padding: 12px 14px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; }
   .qa-q:hover { background: var(--bg3); }
   .qa-icon { color: var(--orange); font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
   .qa-q p { font-size: 13px; font-weight: 500; color: var(--text); }
-  .qa-a { padding: 12px 16px; background: #0d1117; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); display: none; line-height: 1.6; }
+  .qa-a { padding: 12px 14px; background: #0d1117; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); display: none; line-height: 1.6; }
   .qa-a.open { display: block; }
   .qa-a code { font-family: var(--mono); font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--text); }
 
-  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
+  .alert { border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
   .alert-green { background: var(--green-bg); border: 1px solid #1a4d2e; color: var(--green); }
   .alert-orange { background: var(--orange-bg); border: 1px solid #4d3800; color: var(--orange); }
   .alert-red { background: var(--red-bg); border: 1px solid #5a1a1a; color: var(--red); }
+  .alert-mysql { background: #1a0f00; border: 1px solid #5a3800; color: #ff9800; }
   .alert strong { font-weight: 600; }
 
-  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  /* mobile overlay nav */
+  .nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 150; }
+  .nav-overlay.open { display: block; }
+  nav.mobile-open { display: block !important; position: fixed; top: 0; left: 0; width: 240px; height: 100vh; z-index: 160; overflow-y: auto; padding-top: 56px; }
 
   @media (max-width: 768px) {
+    .hamburger { display: block; }
     nav { display: none; }
-    main { padding: 16px; }
+    main { padding: 16px 12px; }
     table.code-table td.expl { display: none; }
+    .section h2 { font-size: 16px; }
+    header h1 { font-size: 13px; }
   }
 </style>
 </head>
@@ -114,48 +130,56 @@
 <header>
   <div class="logo">ILKAN</div>
   <h1>Révision entretien — SAÉ Gestion des Notes</h1>
-  <span>Ligne par ligne</span>
+  <button class="hamburger" onclick="toggleNav()" aria-label="Menu">☰</button>
 </header>
 
+<div class="nav-overlay" id="overlay" onclick="toggleNav()"></div>
+
 <div class="layout">
-<nav>
+<nav id="sidenav">
   <div class="nav-group">
     <div class="nav-label">Ton code (🟢)</div>
-    <a class="mine" href="#models">models.py</a>
-    <a class="mine" href="#forms">forms.py</a>
-    <a class="mine" href="#views-accueil">views — accueil()</a>
-    <a class="mine" href="#views-etudiant">views — CRUD Étudiants</a>
-    <a class="mine" href="#views-enseignant">views — CRUD Enseignants</a>
-    <a class="mine" href="#views-ue">views — CRUD UE</a>
-    <a class="mine" href="#urls">urls_*.py</a>
-    <a class="mine" href="#templates">Templates HTML</a>
-    <a class="mine" href="#settings">settings.py</a>
+    <a class="mine" href="#models" onclick="closeNav()">models.py</a>
+    <a class="mine" href="#forms" onclick="closeNav()">forms.py</a>
+    <a class="mine" href="#views-accueil" onclick="closeNav()">views — accueil()</a>
+    <a class="mine" href="#views-etudiant" onclick="closeNav()">views — CRUD Étudiants</a>
+    <a class="mine" href="#views-enseignant" onclick="closeNav()">views — CRUD Enseignants</a>
+    <a class="mine" href="#views-ue" onclick="closeNav()">views — CRUD UE</a>
+    <a class="mine" href="#urls" onclick="closeNav()">urls_*.py</a>
+    <a class="mine" href="#templates" onclick="closeNav()">Templates HTML</a>
+    <a class="mine" href="#settings" onclick="closeNav()">settings.py</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">MySQL (🟠)</div>
+    <a class="mysql" href="#mysql-connexion" onclick="closeNav()">Se connecter</a>
+    <a class="mysql" href="#mysql-bdd" onclick="closeNav()">Créer la BDD</a>
+    <a class="mysql" href="#mysql-utilisateur" onclick="closeNav()">Utilisateur &amp; droits</a>
+    <a class="mysql" href="#mysql-tables" onclick="closeNav()">Voir les tables</a>
+    <a class="mysql" href="#mysql-describe" onclick="closeNav()">DESCRIBE</a>
+    <a class="mysql" href="#mysql-crud" onclick="closeNav()">SELECT / INSERT...</a>
+    <a class="mysql" href="#mysql-qa" onclick="closeNav()">Questions MySQL</a>
   </div>
   <div class="nav-group">
     <div class="nav-label">Autres (🔵)</div>
-    <a class="other" href="#hussain">Hussain (résumé)</a>
-    <a class="other" href="#rafael">Rafael (résumé)</a>
+    <a class="other" href="#hussain" onclick="closeNav()">Hussain (résumé)</a>
+    <a class="other" href="#rafael" onclick="closeNav()">Rafael (résumé)</a>
   </div>
   <div class="nav-group">
     <div class="nav-label">Entretien</div>
-    <a href="#qa">Questions probables</a>
+    <a href="#qa" onclick="closeNav()">Questions Django</a>
   </div>
 </nav>
 
 <main>
 
-<!-- ═══════════════════════════════════════════════
-     MODELS.PY
-═══════════════════════════════════════════════ -->
+<!-- MODELS -->
 <div class="section" id="models">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>models.py</h2>
   <p class="subtitle">Tu as écrit les 3 premiers modèles. Les modèles Ressource / Examen / Note sont là pour que les migrations fonctionnent — tu dois juste savoir à quoi ils servent.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>models.py</span> — imports</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>models.py</span> — imports</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.db <span class="kw">import</span> models</td><td class="expl">Importe le module Django qui permet de créer des modèles (= des tables SQL)</td></tr>
@@ -165,9 +189,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>models.py</span> — classe Etudiant</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>models.py</span> — classe Etudiant</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">Etudiant</span>(models.Model):</td><td class="expl"><span class="tag tag-key">KEY</span> Déclare un modèle Django. Django va créer automatiquement une table SQL nommée <code>etudiants</code> (défini dans Meta).</td></tr>
@@ -196,9 +218,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>models.py</span> — classe Enseignant</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>models.py</span> — classe Enseignant</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">Enseignant</span>(models.Model):</td><td class="expl">Modèle simple : juste un id auto + nom + prénom.</td></tr>
@@ -210,9 +230,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>models.py</span> — classe UE</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>models.py</span> — classe UE</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">UE</span>(models.Model):</td><td class="expl">Unité d'Enseignement.</td></tr>
@@ -222,7 +240,7 @@
         <tr><td class="ln">5</td><td class="code">    code_ue = models.CharField(max_length=<span class="num">20</span>, primary_key=<span class="kw">True</span>, ...)</td><td class="expl">Même principe qu'Etudiant : le code UE est la PK. Ex: "R1.01".</td></tr>
         <tr><td class="ln">6</td><td class="code">    semestre = models.CharField(max_length=<span class="num">2</span>, choices=SEMESTRES, ...)</td><td class="expl"><code>choices=SEMESTRES</code> : Django ne stocke que "S1"/"S2" etc. et génère un &lt;select&gt; dans les formulaires.</td></tr>
         <tr><td class="ln">7</td><td class="code">    credits_ects = models.PositiveSmallIntegerField(</td><td class="expl">Entier positif court (0 à 32767).</td></tr>
-        <tr><td class="ln">8</td><td class="code">        validators=[MinValueValidator(<span class="num">1</span>), MaxValueValidator(<span class="num">30</span>)]</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Validation : refus si valeur < 1 ou > 30. Django vérifie au niveau du formulaire ET avant la sauvegarde en base.</td></tr>
+        <tr><td class="ln">8</td><td class="code">        validators=[MinValueValidator(<span class="num">1</span>), MaxValueValidator(<span class="num">30</span>)]</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Validation : refus si valeur &lt; 1 ou &gt; 30. Django vérifie au niveau du formulaire ET avant la sauvegarde en base.</td></tr>
       </table>
     </div>
   </div>
@@ -230,9 +248,7 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     FORMS.PY
-═══════════════════════════════════════════════ -->
+<!-- FORMS -->
 <div class="section" id="forms">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>forms.py</h2>
@@ -243,9 +259,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>forms.py</span> — EtudiantForm</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>forms.py</span> — EtudiantForm</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django <span class="kw">import</span> forms</td><td class="expl">Importe le module forms de Django.</td></tr>
@@ -253,7 +267,7 @@
         <tr><td class="ln">3</td><td class="code"><span class="kw">class</span> <span class="cls">EtudiantForm</span>(forms.ModelForm):</td><td class="expl"><span class="tag tag-key">KEY</span> Hérite de ModelForm. Django fait le travail : il lit le modèle Etudiant et crée les champs automatiquement.</td></tr>
         <tr><td class="ln">4</td><td class="code">    <span class="kw">class</span> <span class="cls">Meta</span>:</td><td class="expl">Classe interne obligatoire pour configurer le ModelForm.</td></tr>
         <tr><td class="ln">5</td><td class="code">        model = <span class="cls">Etudiant</span></td><td class="expl">Dit à Django quel modèle utiliser pour créer le formulaire.</td></tr>
-        <tr><td class="ln">6</td><td class="code">        fields = [<span class="str">'numero_etudiant'</span>, <span class="str">'nom'</span>, <span class="str">'prenom'</span>, ...]</td><td class="expl">Liste les champs à inclure. Si tu mets <code>fields = '__all__'</code>, tous les champs du modèle apparaissent.</td></tr>
+        <tr><td class="ln">6</td><td class="code">        fields = [<span class="str">'numero_etudiant'</span>, <span class="str">'nom'</span>, ...]</td><td class="expl">Liste les champs à inclure. Si tu mets <code>fields = '__all__'</code>, tous les champs du modèle apparaissent.</td></tr>
         <tr><td class="ln">7</td><td class="code">        widgets = {</td><td class="expl"><span class="tag tag-key">KEY</span> Personnalise le rendu HTML de chaque champ.</td></tr>
         <tr><td class="ln">8</td><td class="code">            <span class="str">'numero_etudiant'</span>: forms.TextInput(attrs={</td><td class="expl"><code>TextInput</code> = &lt;input type="text"&gt;. <code>attrs</code> = attributs HTML ajoutés.</td></tr>
         <tr><td class="ln">9</td><td class="code">                <span class="str">'class'</span>: <span class="str">'form-control'</span>,</td><td class="expl">Classe Bootstrap pour le style.</td></tr>
@@ -270,18 +284,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     VIEWS — ACCUEIL
-═══════════════════════════════════════════════ -->
+<!-- VIEWS ACCUEIL -->
 <div class="section" id="views-accueil">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>views.py — accueil()</h2>
   <p class="subtitle">La page d'accueil avec les statistiques du dashboard.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>views.py</span> — accueil</span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>views.py</span> — accueil</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.shortcuts <span class="kw">import</span> render, get_object_or_404, redirect</td><td class="expl"><code>render</code> = renvoie une page HTML. <code>get_object_or_404</code> = récupère un objet ou renvoie erreur 404. <code>redirect</code> = redirige vers une autre URL.</td></tr>
@@ -304,18 +314,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     VIEWS — CRUD ÉTUDIANTS
-═══════════════════════════════════════════════ -->
+<!-- VIEWS ETUDIANTS -->
 <div class="section" id="views-etudiant">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>views.py — CRUD Étudiants</h2>
   <p class="subtitle">5 vues : liste, détail, créer, modifier, supprimer. C'est ton gros morceau.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>etudiant_liste()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>etudiant_liste()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_liste</span>(request):</td><td class="expl">Vue appelée quand on va sur /etudiants/</td></tr>
@@ -335,9 +341,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>etudiant_creer()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>etudiant_creer()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_creer</span>(request):</td><td class="expl">Vue pour créer un étudiant. Gère 2 cas : GET (afficher le formulaire vide) et POST (traiter les données envoyées).</td></tr>
@@ -357,9 +361,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>etudiant_modifier()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>etudiant_modifier()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_modifier</span>(request, pk):</td><td class="expl"><span class="tag tag-key">KEY</span> <code>pk</code> = clé primaire passée dans l'URL (ex: /etudiants/22015487/modifier/). Django extrait "22015487" et le passe ici.</td></tr>
@@ -375,9 +377,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>etudiant_supprimer()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>etudiant_supprimer()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_supprimer</span>(request, pk):</td><td class="expl">Vue de suppression.</td></tr>
@@ -395,9 +395,7 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     VIEWS — CRUD ENSEIGNANTS
-═══════════════════════════════════════════════ -->
+<!-- VIEWS ENSEIGNANTS -->
 <div class="section" id="views-enseignant">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>views.py — CRUD Enseignants</h2>
@@ -408,9 +406,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>enseignant_creer()</span> — même logique</span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>enseignant_creer()</span> — même logique</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">enseignant_creer</span>(request):</td><td class="expl">Identique à etudiant_creer() mais avec EtudiantForm → EnseignantForm.</td></tr>
@@ -423,18 +419,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     VIEWS — CRUD UE
-═══════════════════════════════════════════════ -->
+<!-- VIEWS UE -->
 <div class="section" id="views-ue">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>views.py — CRUD UE</h2>
   <p class="subtitle">Même pattern + filtre par semestre en plus.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>ue_liste()</span> — filtre double</span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>ue_liste()</span> — filtre double</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">ue_liste</span>(request):</td><td class="expl"></td></tr>
@@ -451,9 +443,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>ue_detail()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>ue_detail()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">ue_detail</span>(request, pk):</td><td class="expl">Affiche une UE et ses ressources associées.</td></tr>
@@ -466,18 +456,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     URLS
-═══════════════════════════════════════════════ -->
+<!-- URLS -->
 <div class="section" id="urls">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>urls_etudiants.py / urls_enseignants.py / urls_ue.py</h2>
   <p class="subtitle">Tu as créé 3 fichiers d'URLs séparés pour mieux organiser le code.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">notes_app/<span>urls_etudiants.py</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">notes_app/<span>urls_etudiants.py</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.urls <span class="kw">import</span> path</td><td class="expl">Importe la fonction path() pour définir des routes URL.</td></tr>
@@ -494,9 +480,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">project_config/<span>urls.py</span> — inclusion</span>
-    </div>
+    <div class="code-header"><span class="code-filename">project_config/<span>urls.py</span> — inclusion</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code">path(<span class="str">'etudiants/'</span>, include(<span class="str">'notes_app.urls_etudiants'</span>)),</td><td class="expl"><span class="tag tag-key">KEY</span> <code>include()</code> délègue toutes les URLs qui commencent par "etudiants/" vers le fichier urls_etudiants.py. C'est comme dire "pour tout ce qui commence par /etudiants/, va voir dans ce fichier".</td></tr>
@@ -509,18 +493,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     TEMPLATES
-═══════════════════════════════════════════════ -->
+<!-- TEMPLATES -->
 <div class="section" id="templates">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>Templates HTML</h2>
   <p class="subtitle">Les fichiers HTML avec la syntaxe template Django (balises <code>{% %}</code> et variables <code>{{ }}</code>).</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename"><span>etudiant_liste.html</span> — extraits clés</span>
-    </div>
+    <div class="code-header"><span class="code-filename"><span>etudiant_liste.html</span> — extraits clés</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code"><span class="dj">{% extends 'notes_app/base.html' %}</span></td><td class="expl"><span class="tag tag-key">KEY</span> Héritage de template. Ce fichier "étend" base.html. Il ne réécrit que les blocs définis ci-dessous, tout le reste (navigation, CSS, structure) vient de base.html.</td></tr>
@@ -538,9 +518,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename"><span>etudiant_form.html</span> — le formulaire</span>
-    </div>
+    <div class="code-header"><span class="code-filename"><span>etudiant_form.html</span> — le formulaire</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code">&lt;form method="post" enctype="multipart/form-data"&gt;</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>enctype="multipart/form-data"</code> est OBLIGATOIRE quand il y a un upload de fichier. Sans ça, la photo n'est pas envoyée au serveur.</td></tr>
@@ -555,9 +533,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename"><span>confirmer_suppression.html</span> — page de confirmation</span>
-    </div>
+    <div class="code-header"><span class="code-filename"><span>confirmer_suppression.html</span> — page de confirmation</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code">Êtes-vous sûr de vouloir supprimer <span class="dj">{{ type }}</span> &lt;strong&gt;<span class="dj">{{ objet }}</span>&lt;/strong&gt; ?</td><td class="expl"><code>{{ objet }}</code> appelle <code>__str__()</code> du modèle. Pour un étudiant ça affiche "Prénom Nom (numéro)".</td></tr>
@@ -571,18 +547,14 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     SETTINGS
-═══════════════════════════════════════════════ -->
+<!-- SETTINGS -->
 <div class="section" id="settings">
   <div class="section-tag tag-mine">✅ Ton code</div>
   <h2>settings.py</h2>
   <p class="subtitle">Configuration générale de Django. Tu as configuré la connexion MySQL.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">project_config/<span>settings.py</span> — base de données</span>
-    </div>
+    <div class="code-header"><span class="code-filename">project_config/<span>settings.py</span> — base de données</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code">DATABASES = {</td><td class="expl">Configuration de la base de données. Django supporte MySQL, PostgreSQL, SQLite...</td></tr>
@@ -599,9 +571,7 @@
   </div>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">project_config/<span>settings.py</span> — autres config</span>
-    </div>
+    <div class="code-header"><span class="code-filename">project_config/<span>settings.py</span> — autres config</span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">1</td><td class="code">INSTALLED_APPS = [..., <span class="str">'notes_app'</span>]</td><td class="expl"><span class="tag tag-key">KEY</span> Enregistre l'application notes_app dans Django. Obligatoire pour que Django trouve les modèles, templates et migrations.</td></tr>
@@ -617,17 +587,367 @@
 <hr class="divider">
 
 <!-- ═══════════════════════════════════════════════
-     HUSSAIN
+     MYSQL — NOUVELLE SECTION COMPLÈTE
 ═══════════════════════════════════════════════ -->
+
+<div class="section" id="mysql-connexion">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>Se connecter à MySQL</h2>
+  <p class="subtitle">Les commandes pour ouvrir un terminal MySQL depuis la machine Hussain (XAMPP) ou depuis n'importe quelle machine avec MySQL installé.</p>
+
+  <div class="alert alert-mysql">
+    <strong>Contexte du projet :</strong> MySQL tourne sur la VM de Hussain avec XAMPP. Tu t'y connectes depuis le terminal, soit directement sur sa machine, soit à distance depuis ton poste via le réseau.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">terminal — <span>connexion MySQL</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Connexion en tant que root (local)</span></td><td class="expl">Utilisateur root = superadmin MySQL, a tous les droits. À utiliser sur la machine Hussain directement.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">mysql</span> -u root -p</td><td class="expl"><code>-u root</code> = utiliser l'utilisateur "root". <code>-p</code> = demander le mot de passe (à taper après). Sur XAMPP le mot de passe root est souvent vide, donc juste Entrée.</td></tr>
+        <tr><td class="ln">3</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-cmt">-- Connexion avec un utilisateur spécifique</span></td><td class="expl">Connexion avec l'utilisateur "ilkan" créé pour le projet.</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-kw">mysql</span> -u ilkan -p</td><td class="expl">Le mot de passe "toto" sera demandé.</td></tr>
+        <tr><td class="ln">6</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code"><span class="sql-cmt">-- Connexion à distance (depuis ta machine)</span></td><td class="expl"><code>-h</code> = hôte (host). Tu te connectes à MySQL sur la machine de Hussain via son IP ou nom DNS.</td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-kw">mysql</span> -h serveur-notes -u ilkan -p</td><td class="expl">Équivalent au HOST dans settings.py. Connexion réseau sur le port 3306.</td></tr>
+        <tr><td class="ln">9</td><td class="code"><span class="sql-kw">mysql</span> -h 192.168.1.50 -u ilkan -p</td><td class="expl">Même chose mais avec l'IP directe au lieu du nom DNS.</td></tr>
+        <tr><td class="ln">10</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">11</td><td class="code"><span class="sql-cmt">-- Connexion directe à une base</span></td><td class="expl">On peut préciser la base directement dans la commande de connexion.</td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-kw">mysql</span> -u ilkan -p gestion-notes</td><td class="expl">Se connecte et sélectionne directement la base "gestion-notes".</td></tr>
+        <tr><td class="ln">13</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">14</td><td class="code"><span class="sql-cmt">-- Quitter le client MySQL</span></td><td class="expl">Une fois dans le shell MySQL (prompt mysql>).</td></tr>
+        <tr><td class="ln">15</td><td class="code"><span class="sql-kw">EXIT</span>;</td><td class="expl">Ou <code>QUIT;</code>, c'est pareil. Le point-virgule est obligatoire pour toutes les commandes SQL.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-bdd">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>Créer la base de données</h2>
+  <p class="subtitle">Commandes pour créer la BDD du projet depuis zéro.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>créer et sélectionner la BDD</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Voir toutes les bases existantes</span></td><td class="expl">Commande de base pour voir ce qui existe déjà.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">SHOW DATABASES</span>;</td><td class="expl">Liste toutes les bases de données MySQL. Tu verras information_schema, mysql, performance_schema (systèmes) + les tiennes.</td></tr>
+        <tr><td class="ln">3</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-cmt">-- Créer la base du projet</span></td><td class="expl">Commande de création. À faire une seule fois.</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-kw">CREATE DATABASE</span> <span class="sql-val">`gestion-notes`</span></td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Les backticks (`) sont nécessaires car le nom contient un tiret. Sans eux MySQL croirait que c'est une soustraction.</td></tr>
+        <tr><td class="ln">6</td><td class="code">  <span class="sql-kw">CHARACTER SET</span> utf8mb4</td><td class="expl">Définit l'encodage de la base. utf8mb4 = Unicode complet (emojis inclus). Cohérent avec le charset Django dans settings.py.</td></tr>
+        <tr><td class="ln">7</td><td class="code">  <span class="sql-kw">COLLATE</span> utf8mb4_unicode_ci;</td><td class="expl"><code>collate</code> = règles de tri et comparaison. <code>unicode_ci</code> = insensible à la casse (ci = case insensitive). Les accents sont gérés correctement.</td></tr>
+        <tr><td class="ln">8</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">9</td><td class="code"><span class="sql-cmt">-- Sélectionner la base pour travailler dedans</span></td><td class="expl">Obligatoire avant toute requête sur les tables.</td></tr>
+        <tr><td class="ln">10</td><td class="code"><span class="sql-kw">USE</span> <span class="sql-val">`gestion-notes`</span>;</td><td class="expl">Toutes les requêtes suivantes s'exécutent dans cette base. Le prompt change : <code>mysql [gestion-notes]&gt;</code></td></tr>
+        <tr><td class="ln">11</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-cmt">-- Savoir dans quelle base on est</span></td><td class="expl">Utile pour vérifier qu'on est bien dans la bonne base.</td></tr>
+        <tr><td class="ln">13</td><td class="code"><span class="sql-kw">SELECT DATABASE</span>();</td><td class="expl">Retourne le nom de la base courante, ou NULL si aucune n'est sélectionnée.</td></tr>
+        <tr><td class="ln">14</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">15</td><td class="code"><span class="sql-cmt">-- Supprimer une base (attention !)</span></td><td class="expl">Irréversible ! Supprime tout le contenu.</td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-kw">DROP DATABASE IF EXISTS</span> <span class="sql-val">`gestion-notes`</span>;</td><td class="expl"><code>IF EXISTS</code> évite une erreur si la base n'existe pas déjà. Utile pour les scripts de réinstallation.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-utilisateur">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>Créer un utilisateur et lui donner des droits</h2>
+  <p class="subtitle">Dans le projet, Django se connecte avec l'utilisateur "ilkan". Voici comment il a été créé et configuré.</p>
+
+  <div class="alert alert-mysql">
+    <strong>Pourquoi ne pas utiliser root ?</strong> Root a tous les droits sur tout MySQL. Si Django est compromis, l'attaquant aurait accès à toutes les bases. Créer un utilisateur dédié avec uniquement les droits nécessaires sur une seule base = principe du moindre privilège.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>gestion des utilisateurs</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Voir tous les utilisateurs existants</span></td><td class="expl">La table mysql.user contient tous les comptes MySQL.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">SELECT</span> user, host <span class="sql-kw">FROM</span> mysql.user;</td><td class="expl">Affiche le nom et le host autorisé de chaque utilisateur. Le host "%" = connexion depuis n'importe quelle machine. "localhost" = uniquement en local.</td></tr>
+        <tr><td class="ln">3</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-cmt">-- Créer un utilisateur local</span></td><td class="expl">Connexion uniquement depuis localhost (la même machine).</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-kw">CREATE USER</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'localhost'</span></td><td class="expl"><code>'ilkan'@'localhost'</code> = l'utilisateur ilkan ne peut se connecter que depuis la machine elle-même.</td></tr>
+        <tr><td class="ln">6</td><td class="code">  <span class="sql-kw">IDENTIFIED BY</span> <span class="sql-val">'toto'</span>;</td><td class="expl">Définit le mot de passe. C'est le même que dans settings.py.</td></tr>
+        <tr><td class="ln">7</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-cmt">-- Créer un utilisateur accessible depuis n'importe où</span></td><td class="expl">Nécessaire si Django est sur une machine séparée (notre cas).</td></tr>
+        <tr><td class="ln">9</td><td class="code"><span class="sql-kw">CREATE USER</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'%'</span></td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>'%'</code> = wildcard, autorise les connexions depuis n'importe quelle IP. Nécessaire car Django tourne sur une autre VM que MySQL.</td></tr>
+        <tr><td class="ln">10</td><td class="code">  <span class="sql-kw">IDENTIFIED BY</span> <span class="sql-val">'toto'</span>;</td><td class="expl"></td></tr>
+        <tr><td class="ln">11</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-cmt">-- Donner TOUS les droits sur notre BDD</span></td><td class="expl">GRANT = accorder des privilèges.</td></tr>
+        <tr><td class="ln">13</td><td class="code"><span class="sql-kw">GRANT ALL PRIVILEGES ON</span></td><td class="expl"><code>ALL PRIVILEGES</code> = SELECT, INSERT, UPDATE, DELETE, CREATE, DROP... tout. Pour une app Django c'est nécessaire (migrations créent des tables).</td></tr>
+        <tr><td class="ln">14</td><td class="code">  <span class="sql-val">`gestion-notes`</span>.* <span class="sql-kw">TO</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'%'</span>;</td><td class="expl"><code>`gestion-notes`.*</code> = toutes les tables de cette base. L'utilisateur n'a aucun droit sur les autres bases MySQL.</td></tr>
+        <tr><td class="ln">15</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-cmt">-- Appliquer les changements de droits</span></td><td class="expl">Obligatoire après tout GRANT ou REVOKE.</td></tr>
+        <tr><td class="ln">17</td><td class="code"><span class="sql-kw">FLUSH PRIVILEGES</span>;</td><td class="expl">Recharge la table des privilèges en mémoire. Sans ça, les nouveaux droits peuvent ne pas être pris en compte immédiatement.</td></tr>
+        <tr><td class="ln">18</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">19</td><td class="code"><span class="sql-cmt">-- Voir les droits d'un utilisateur</span></td><td class="expl">Permet de vérifier ce qu'un utilisateur peut faire.</td></tr>
+        <tr><td class="ln">20</td><td class="code"><span class="sql-kw">SHOW GRANTS FOR</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'%'</span>;</td><td class="expl">Affiche toutes les lignes de droits accordées à cet utilisateur. Pratique pour vérifier avant l'entretien.</td></tr>
+        <tr><td class="ln">21</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">22</td><td class="code"><span class="sql-cmt">-- Changer le mot de passe</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">23</td><td class="code"><span class="sql-kw">ALTER USER</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'%'</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">24</td><td class="code">  <span class="sql-kw">IDENTIFIED BY</span> <span class="sql-val">'nouveau_mdp'</span>;</td><td class="expl">Modifie le mot de passe sans supprimer/recréer l'utilisateur.</td></tr>
+        <tr><td class="ln">25</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">26</td><td class="code"><span class="sql-cmt">-- Supprimer un utilisateur</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">27</td><td class="code"><span class="sql-kw">DROP USER</span> <span class="sql-val">'ilkan'</span>@<span class="sql-val">'%'</span>;</td><td class="expl">Supprime l'utilisateur ET tous ses droits.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-tables">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>Voir les tables</h2>
+  <p class="subtitle">Après que Django a lancé les migrations, ces commandes permettent d'inspecter ce qui a été créé en base.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>navigation dans les tables</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Se mettre dans la bonne base d'abord</span></td><td class="expl">Toujours commencer par là.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">USE</span> <span class="sql-val">`gestion-notes`</span>;</td><td class="expl">Sélectionne la base du projet.</td></tr>
+        <tr><td class="ln">3</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-cmt">-- Lister toutes les tables</span></td><td class="expl">Voir les tables créées par Django via les migrations.</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-kw">SHOW TABLES</span>;</td><td class="expl">Retourne la liste de toutes les tables. Après migrate tu verras : etudiants, enseignants, ue, ressources, examens, notes + les tables système Django (django_migrations, auth_user, etc.).</td></tr>
+        <tr><td class="ln">6</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code"><span class="sql-cmt">-- Voir les tables avec leur type</span></td><td class="expl">Version plus détaillée.</td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-kw">SHOW FULL TABLES</span>;</td><td class="expl">Affiche aussi le type (BASE TABLE ou VIEW). Pratique pour distinguer vraies tables et vues SQL.</td></tr>
+        <tr><td class="ln">9</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">10</td><td class="code"><span class="sql-cmt">-- Voir le SQL de création d'une table</span></td><td class="expl">Montre exactement comment la table a été créée.</td></tr>
+        <tr><td class="ln">11</td><td class="code"><span class="sql-kw">SHOW CREATE TABLE</span> etudiants;</td><td class="expl"><span class="tag tag-tip">TIP</span> Très utile pour l'entretien : montre les types de colonnes, les contraintes (UNIQUE, NOT NULL), les index, la PK. Tu vois ce que Django a généré depuis ton modèle Python.</td></tr>
+        <tr><td class="ln">12</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">13</td><td class="code"><span class="sql-cmt">-- Voir les index d'une table</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">14</td><td class="code"><span class="sql-kw">SHOW INDEX FROM</span> etudiants;</td><td class="expl">Affiche les index (PRIMARY KEY, UNIQUE, INDEX). Django crée automatiquement un index sur les FK et les champs unique=True.</td></tr>
+        <tr><td class="ln">15</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-cmt">-- Compter les lignes dans une table</span></td><td class="expl">Vérification rapide.</td></tr>
+        <tr><td class="ln">17</td><td class="code"><span class="sql-kw">SELECT COUNT</span>(*) <span class="sql-kw">FROM</span> etudiants;</td><td class="expl">Retourne le nombre d'étudiants en base. Doit correspondre à <code>Etudiant.objects.count()</code> côté Django.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-describe">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>DESCRIBE — inspecter la structure d'une table</h2>
+  <p class="subtitle">La commande la plus importante pour comprendre et expliquer une table. Le prof va sûrement demander ça.</p>
+
+  <div class="alert alert-mysql">
+    <strong>DESCRIBE = ta carte d'identité de table.</strong> Elle montre colonnes, types SQL, si NULL est autorisé, clé primaire, valeurs par défaut. Mémorise la syntaxe et le résultat pour chaque table que tu as créée.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>DESCRIBE / DESC</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- DESCRIBE table (forme longue)</span></td><td class="expl">Les deux formes sont identiques.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">DESCRIBE</span> etudiants;</td><td class="expl"><span class="tag tag-key">KEY</span> Affiche : Field | Type | Null | Key | Default | Extra. Montre toute la structure de la table.</td></tr>
+        <tr><td class="ln">3</td><td class="code"><span class="sql-kw">DESC</span> etudiants;</td><td class="expl">Raccourci de DESCRIBE. Même résultat.</td></tr>
+        <tr><td class="ln">4</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-cmt">-- Résultat attendu pour etudiants :</span></td><td class="expl">Ce que tu verras après migrate.</td></tr>
+        <tr><td class="ln">6</td><td class="code"><span class="sql-cmt">-- Field             | Type         | Null | Key</span></td><td class="expl">Field = nom de la colonne. Type = type SQL. Null = peut être NULL. Key = PRI/UNI/MUL.</td></tr>
+        <tr><td class="ln">7</td><td class="code"><span class="sql-cmt">-- numero_etudiant   | varchar(20)  | NO   | PRI</span></td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> PRI = Primary Key. varchar(20) correspond à CharField(max_length=20). NO = NOT NULL (primary_key implique NOT NULL).</td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-cmt">-- nom               | varchar(100) | NO   |</span></td><td class="expl">NOT NULL car pas de null=True dans le modèle.</td></tr>
+        <tr><td class="ln">9</td><td class="code"><span class="sql-cmt">-- prenom            | varchar(100) | NO   |</span></td><td class="expl">Idem.</td></tr>
+        <tr><td class="ln">10</td><td class="code"><span class="sql-cmt">-- groupe            | varchar(20)  | NO   |</span></td><td class="expl">Idem.</td></tr>
+        <tr><td class="ln">11</td><td class="code"><span class="sql-cmt">-- email             | varchar(254) | NO   | UNI</span></td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> UNI = contrainte UNIQUE. Correspond à unique=True dans le modèle. varchar(254) = taille standard d'un email (définie par EmailField).</td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-cmt">-- photo             | varchar(100) | YES  |</span></td><td class="expl">YES = peut être NULL (null=True dans le modèle). varchar(100) = ImageField stocke le chemin du fichier, pas le fichier lui-même.</td></tr>
+        <tr><td class="ln">13</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">14</td><td class="code"><span class="sql-cmt">-- DESCRIBE les autres tables</span></td><td class="expl">Connais le résultat de chaque table que tu as créée.</td></tr>
+        <tr><td class="ln">15</td><td class="code"><span class="sql-kw">DESC</span> enseignants;</td><td class="expl">id_enseignant = int AUTO_INCREMENT PRI | nom = varchar(100) | prenom = varchar(100)</td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-kw">DESC</span> ue;</td><td class="expl">code_ue = varchar(20) PRI | nom = varchar(200) | semestre = varchar(2) | credits_ects = smallint unsigned</td></tr>
+        <tr><td class="ln">17</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">18</td><td class="code"><span class="sql-cmt">-- INFORMATION_SCHEMA : version SQL de DESCRIBE</span></td><td class="expl">Plus verbeux mais donne encore plus de détails.</td></tr>
+        <tr><td class="ln">19</td><td class="code"><span class="sql-kw">SELECT</span> COLUMN_NAME, DATA_TYPE, IS_NULLABLE,</td><td class="expl">Equivalent avancé de DESCRIBE avec plus de colonnes disponibles.</td></tr>
+        <tr><td class="ln">20</td><td class="code">  COLUMN_KEY, CHARACTER_MAXIMUM_LENGTH</td><td class="expl"></td></tr>
+        <tr><td class="ln">21</td><td class="code"><span class="sql-kw">FROM</span> INFORMATION_SCHEMA.COLUMNS</td><td class="expl">INFORMATION_SCHEMA = base système MySQL qui contient les métadonnées de toutes les bases.</td></tr>
+        <tr><td class="ln">22</td><td class="code"><span class="sql-kw">WHERE</span> TABLE_NAME = <span class="sql-val">'etudiants'</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">23</td><td class="code">  <span class="sql-kw">AND</span> TABLE_SCHEMA = <span class="sql-val">'gestion-notes'</span>;</td><td class="expl">Filtre sur notre base spécifiquement.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-crud">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>SELECT / INSERT / UPDATE / DELETE</h2>
+  <p class="subtitle">Les requêtes SQL de base pour interroger et manipuler les données. À connaître pour montrer que tu comprends ce que Django fait en coulisses.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>SELECT (lecture)</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Voir tout le contenu d'une table</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants;</td><td class="expl">L'étoile = toutes les colonnes. Équivalent de <code>Etudiant.objects.all()</code> côté Django.</td></tr>
+        <tr><td class="ln">3</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-cmt">-- Colonnes spécifiques</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="sql-kw">SELECT</span> numero_etudiant, nom, prenom <span class="sql-kw">FROM</span> etudiants;</td><td class="expl">Sélectionne seulement ces 3 colonnes. Plus efficace que SELECT *.</td></tr>
+        <tr><td class="ln">6</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code"><span class="sql-cmt">-- Filtrer avec WHERE</span></td><td class="expl">Equivalent de <code>.filter()</code> côté Django.</td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">9</td><td class="code">  <span class="sql-kw">WHERE</span> groupe = <span class="sql-val">'BUT-RT-1A'</span>;</td><td class="expl">Filtre exact. Correspond à <code>Etudiant.objects.filter(groupe='BUT-RT-1A')</code>.</td></tr>
+        <tr><td class="ln">10</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">11</td><td class="code"><span class="sql-cmt">-- Recherche partielle (LIKE)</span></td><td class="expl">Équivalent de __icontains dans Django.</td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">13</td><td class="code">  <span class="sql-kw">WHERE</span> nom <span class="sql-kw">LIKE</span> <span class="sql-val">'%dupont%'</span>;</td><td class="expl"><span class="tag tag-key">KEY</span> <code>%</code> = n'importe quels caractères avant/après. Insensible à la casse sur MySQL avec collation _ci. C'est ce que génère <code>Q(nom__icontains='dupont')</code>.</td></tr>
+        <tr><td class="ln">14</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">15</td><td class="code"><span class="sql-cmt">-- Trier les résultats</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">17</td><td class="code">  <span class="sql-kw">ORDER BY</span> nom <span class="sql-kw">ASC</span>, prenom <span class="sql-kw">ASC</span>;</td><td class="expl">Tri par nom puis prénom. Correspond à <code>ordering = ['nom', 'prenom']</code> dans la Meta du modèle. ASC = croissant (défaut), DESC = décroissant.</td></tr>
+        <tr><td class="ln">18</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">19</td><td class="code"><span class="sql-cmt">-- Limiter le nombre de résultats</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">20</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">21</td><td class="code">  <span class="sql-kw">ORDER BY</span> numero_etudiant <span class="sql-kw">DESC</span> <span class="sql-kw">LIMIT</span> <span class="num">5</span>;</td><td class="expl">Correspond à <code>Etudiant.objects.order_by('-pk')[:5]</code> dans la vue accueil(). Les 5 derniers ajoutés.</td></tr>
+        <tr><td class="ln">22</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">23</td><td class="code"><span class="sql-cmt">-- Récupérer un seul enregistrement</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">24</td><td class="code"><span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">25</td><td class="code">  <span class="sql-kw">WHERE</span> numero_etudiant = <span class="sql-val">'22015487'</span>;</td><td class="expl">Correspond à <code>get_object_or_404(Etudiant, pk='22015487')</code>. Renvoie 1 ligne ou rien.</td></tr>
+        <tr><td class="ln">26</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">27</td><td class="code"><span class="sql-cmt">-- Jointure (pour voir les notes avec étudiant)</span></td><td class="expl">JOIN = associer deux tables.</td></tr>
+        <tr><td class="ln">28</td><td class="code"><span class="sql-kw">SELECT</span> e.nom, e.prenom, n.valeur</td><td class="expl">Sélectionne des colonnes des deux tables.</td></tr>
+        <tr><td class="ln">29</td><td class="code"><span class="sql-kw">FROM</span> etudiants e</td><td class="expl"><code>e</code> = alias pour etudiants.</td></tr>
+        <tr><td class="ln">30</td><td class="code">  <span class="sql-kw">JOIN</span> notes n <span class="sql-kw">ON</span> e.numero_etudiant = n.etudiant_id</td><td class="expl"><span class="tag tag-tip">TIP</span> Correspond au <code>select_related()</code> de Django. La colonne n.etudiant_id est créée automatiquement par Django pour la ForeignKey.</td></tr>
+        <tr><td class="ln">31</td><td class="code">  <span class="sql-kw">WHERE</span> e.numero_etudiant = <span class="sql-val">'22015487'</span>;</td><td class="expl">Toutes les notes de cet étudiant.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-filename">mysql&gt; — <span>INSERT / UPDATE / DELETE</span></span></div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="sql-cmt">-- Insérer un étudiant manuellement</span></td><td class="expl">Correspond à form.save() sur un formulaire de création.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="sql-kw">INSERT INTO</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">3</td><td class="code">  (numero_etudiant, nom, prenom, groupe, email)</td><td class="expl">Liste des colonnes à remplir. On n'inclut pas photo car c'est optionnel (NULL autorisé).</td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="sql-kw">VALUES</span></td><td class="expl"></td></tr>
+        <tr><td class="ln">5</td><td class="code">  (<span class="sql-val">'22015487'</span>, <span class="sql-val">'Guney'</span>, <span class="sql-val">'Ilkan'</span>, <span class="sql-val">'BUT-RT-1A'</span>, <span class="sql-val">'ilkan@iut.fr'</span>);</td><td class="expl">Les valeurs dans le même ordre que les colonnes listées.</td></tr>
+        <tr><td class="ln">6</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code"><span class="sql-cmt">-- Modifier un enregistrement</span></td><td class="expl">Correspond à form.save() sur un formulaire de modification (instance=...).</td></tr>
+        <tr><td class="ln">8</td><td class="code"><span class="sql-kw">UPDATE</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">9</td><td class="code">  <span class="sql-kw">SET</span> groupe = <span class="sql-val">'BUT-RT-2A'</span>, email = <span class="sql-val">'ilkan2@iut.fr'</span></td><td class="expl">On peut modifier plusieurs colonnes à la fois avec SET col1=val1, col2=val2.</td></tr>
+        <tr><td class="ln">10</td><td class="code">  <span class="sql-kw">WHERE</span> numero_etudiant = <span class="sql-val">'22015487'</span>;</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Toujours mettre un WHERE sur UPDATE et DELETE ! Sans WHERE, ça modifie/supprime TOUTES les lignes de la table.</td></tr>
+        <tr><td class="ln">11</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">12</td><td class="code"><span class="sql-cmt">-- Supprimer un enregistrement</span></td><td class="expl">Correspond à etudiant.delete() dans la vue.</td></tr>
+        <tr><td class="ln">13</td><td class="code"><span class="sql-kw">DELETE FROM</span> etudiants</td><td class="expl"></td></tr>
+        <tr><td class="ln">14</td><td class="code">  <span class="sql-kw">WHERE</span> numero_etudiant = <span class="sql-val">'22015487'</span>;</td><td class="expl">Supprime uniquement cet étudiant. Sans WHERE, TOUS les étudiants seraient supprimés !</td></tr>
+        <tr><td class="ln">15</td><td class="code"></td><td class="expl"></td></tr>
+        <tr><td class="ln">16</td><td class="code"><span class="sql-cmt">-- Vider une table complètement</span></td><td class="expl">Plus rapide que DELETE sans WHERE.</td></tr>
+        <tr><td class="ln">17</td><td class="code"><span class="sql-kw">TRUNCATE TABLE</span> etudiants;</td><td class="expl">Supprime toutes les lignes ET remet les compteurs auto_increment à 0. Plus rapide car pas de log ligne par ligne. Irréversible.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="mysql-qa">
+  <div class="section-tag tag-mysql">🟠 MySQL</div>
+  <h2>Questions MySQL probables du prof</h2>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Comment tu as créé la base de données et l'utilisateur ?</p>
+    </div>
+    <div class="qa-a">
+      Je me suis connecté à MySQL avec root sur la VM Hussain : <code>mysql -u root -p</code>. Ensuite j'ai créé la base : <code>CREATE DATABASE `gestion-notes` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</code>. Puis j'ai créé l'utilisateur avec accès réseau (car Django tourne sur une autre machine) : <code>CREATE USER 'ilkan'@'%' IDENTIFIED BY 'toto';</code>. Et je lui ai donné tous les droits sur notre base : <code>GRANT ALL PRIVILEGES ON `gestion-notes`.* TO 'ilkan'@'%';</code>. Puis <code>FLUSH PRIVILEGES;</code> pour appliquer.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi <code>'ilkan'@'%'</code> et pas <code>'ilkan'@'localhost'</code> ?</p>
+    </div>
+    <div class="qa-a">
+      Parce que dans notre architecture, Django et MySQL sont sur deux machines différentes. Le <code>%</code> signifie "connexion acceptée depuis n'importe quelle adresse IP". Si j'avais mis <code>localhost</code>, seules les connexions depuis la machine MySQL elle-même seraient acceptées, et Django qui tourne sur une autre VM ne pourrait pas se connecter. C'est directement lié au <code>HOST: 'serveur-notes'</code> dans settings.py.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Montre la structure de la table etudiants — que donne <code>DESCRIBE etudiants</code> ?</p>
+    </div>
+    <div class="qa-a">
+      <code>DESCRIBE etudiants;</code> retourne :<br><br>
+      • <code>numero_etudiant</code> — varchar(20) — NOT NULL — PRI (clé primaire, car <code>primary_key=True</code> dans le modèle)<br>
+      • <code>nom</code> — varchar(100) — NOT NULL<br>
+      • <code>prenom</code> — varchar(100) — NOT NULL<br>
+      • <code>groupe</code> — varchar(20) — NOT NULL<br>
+      • <code>email</code> — varchar(254) — NOT NULL — UNI (index unique, car <code>unique=True</code>)<br>
+      • <code>photo</code> — varchar(100) — YES (peut être NULL, car <code>null=True</code> dans le modèle). C'est le chemin du fichier, pas le fichier lui-même.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Quelle est la différence entre <code>DESCRIBE</code> et <code>SHOW CREATE TABLE</code> ?</p>
+    </div>
+    <div class="qa-a">
+      <code>DESCRIBE</code> donne une vue tabulaire simple : nom de colonne, type, nullable, clé, valeur par défaut. C'est lisible rapidement. <code>SHOW CREATE TABLE</code> retourne le SQL complet qui a été utilisé pour créer la table : on voit les contraintes complètes (CONSTRAINT name UNIQUE KEY...), les FK avec ON DELETE CASCADE, le ENGINE=InnoDB, le charset. C'est plus verbeux mais plus complet pour comprendre toutes les contraintes.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Qu'est-ce que Django crée comme tables en plus des tiennes ?</p>
+    </div>
+    <div class="qa-a">
+      Après <code>python manage.py migrate</code>, Django crée des tables système en plus des nôtres :<br><br>
+      • <code>django_migrations</code> : historique de toutes les migrations appliquées<br>
+      • <code>django_content_type</code> : référence tous les modèles (utile pour les permissions)<br>
+      • <code>auth_user</code>, <code>auth_group</code>, <code>auth_permission</code> : système d'authentification Django<br>
+      • <code>django_session</code> : sessions utilisateurs (messages flash, authentification)<br><br>
+      Et nos tables à nous : <code>etudiants</code>, <code>enseignants</code>, <code>ue</code>, <code>ressources</code>, <code>examens</code>, <code>notes</code>.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi utf8mb4 et pas juste utf8 ?</p>
+    </div>
+    <div class="qa-a">
+      En MySQL, <code>utf8</code> est en réalité un encodage tronqué qui supporte seulement 3 octets par caractère. Or certains caractères Unicode (notamment les emojis comme 😀, mais aussi certains caractères asiatiques) nécessitent 4 octets. <code>utf8mb4</code> (mb4 = multi-byte 4) est le vrai UTF-8 complet qui supporte tous les caractères Unicode. Utiliser <code>utf8</code> peut provoquer des erreurs ou tronquer des données si un étudiant met un emoji dans son nom par exemple.
+    </div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Quelle est la différence entre DELETE et TRUNCATE ?</p>
+    </div>
+    <div class="qa-a">
+      <code>DELETE FROM table WHERE condition</code> supprime des lignes spécifiques, avec log transaction par transaction. Si pas de WHERE : supprime tout mais lentement. <code>TRUNCATE TABLE</code> vide la table entière d'un coup, sans log ligne par ligne → beaucoup plus rapide. TRUNCATE remet aussi les compteurs AUTO_INCREMENT à 0. La différence importante : TRUNCATE ne peut pas être filtré (pas de WHERE), et il peut être bloqué par des FK. DELETE peut être rollbacké dans une transaction, TRUNCATE non (dans certains moteurs).
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- HUSSAIN -->
 <div class="section" id="hussain">
   <div class="section-tag tag-other">🔵 Hussain</div>
   <h2>Ce que Hussain a fait (résumé à connaître)</h2>
   <p class="subtitle">Tu dois savoir ce que font ces parties globalement, même si tu n'as pas écrit le code.</p>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>CRUD Ressources / Examens / Notes</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>CRUD Ressources / Examens / Notes</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">—</td><td class="code">Ressource = matière liée à une UE</td><td class="expl">ForeignKey vers UE (<code>ue = ForeignKey(UE, on_delete=CASCADE)</code>). Si l'UE est supprimée, les ressources associées sont supprimées aussi (CASCADE).</td></tr>
@@ -641,17 +961,13 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     RAFAEL
-═══════════════════════════════════════════════ -->
+<!-- RAFAEL -->
 <div class="section" id="rafael">
   <div class="section-tag tag-other">🔵 Rafael</div>
   <h2>Ce que Rafael a fait (résumé à connaître)</h2>
 
   <div class="code-block">
-    <div class="code-header">
-      <span class="code-filename">views.py — <span>import_csv() + releve_etudiant()</span></span>
-    </div>
+    <div class="code-header"><span class="code-filename">views.py — <span>import_csv() + releve_etudiant()</span></span></div>
     <div class="code-body">
       <table class="code-table">
         <tr><td class="ln">—</td><td class="code"><span class="kw">import</span> csv, io</td><td class="expl">Modules Python standard pour lire des fichiers CSV.</td></tr>
@@ -666,11 +982,9 @@
 
 <hr class="divider">
 
-<!-- ═══════════════════════════════════════════════
-     QUESTIONS
-═══════════════════════════════════════════════ -->
+<!-- QUESTIONS DJANGO -->
 <div class="section" id="qa">
-  <h2>Questions probables du prof</h2>
+  <h2>Questions Django probables du prof</h2>
   <p class="subtitle">Clique sur chaque question pour voir la réponse.</p>
 
   <div class="qa-block">
@@ -762,6 +1076,18 @@
 function toggle(el) {
   const answer = el.nextElementSibling;
   answer.classList.toggle('open');
+}
+function toggleNav() {
+  const nav = document.getElementById('sidenav');
+  const overlay = document.getElementById('overlay');
+  nav.classList.toggle('mobile-open');
+  overlay.classList.toggle('open');
+}
+function closeNav() {
+  const nav = document.getElementById('sidenav');
+  const overlay = document.getElementById('overlay');
+  nav.classList.remove('mobile-open');
+  overlay.classList.remove('open');
 }
 </script>
 </body>
