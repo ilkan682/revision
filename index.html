@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révision code — Ilkan · SAÉ Gestion Notes</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b22;
+    --bg3: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --green-bg: #0d2318;
+    --blue: #58a6ff;
+    --blue-bg: #0d1b2e;
+    --orange: #d29922;
+    --orange-bg: #2a1f00;
+    --red: #f85149;
+    --red-bg: #2a0d0d;
+    --purple: #bc8cff;
+    --purple-bg: #1a1030;
+    --yellow: #e3b341;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; }
+
+  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 20px 32px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  .logo { background: var(--green); color: #000; font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 6px; font-family: var(--mono); }
+  header h1 { font-size: 16px; font-weight: 600; color: var(--text); }
+  header span { color: var(--muted); font-size: 13px; }
+
+  .layout { display: flex; min-height: calc(100vh - 57px); }
+
+  nav { width: 240px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 57px; height: calc(100vh - 57px); overflow-y: auto; }
+  nav .nav-group { padding: 0 12px 16px; }
+  nav .nav-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 8px 6px; }
+  nav a { display: block; padding: 5px 8px; border-radius: 6px; text-decoration: none; color: var(--muted); font-size: 13px; transition: all .15s; }
+  nav a:hover { background: var(--bg3); color: var(--text); }
+  nav a.mine { color: var(--green); }
+  nav a.mine:hover { background: var(--green-bg); }
+  nav a.other { color: var(--blue); }
+  nav a.other:hover { background: var(--blue-bg); }
+
+  main { flex: 1; padding: 32px; max-width: 900px; }
+
+  .section { margin-bottom: 48px; scroll-margin-top: 80px; }
+  .section-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+  .tag-mine { background: var(--green-bg); color: var(--green); border: 1px solid #1a4d2e; }
+  .tag-other { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a3a5c; }
+  .section h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .section .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  .code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+  .code-header { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .code-filename { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .code-filename span { color: var(--text); }
+  .code-body { overflow-x: auto; }
+
+  table.code-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
+  table.code-table tr { border-bottom: 1px solid #1a1f27; }
+  table.code-table tr:last-child { border-bottom: none; }
+  table.code-table tr:hover { background: #1a2030; }
+  table.code-table td.ln { width: 44px; text-align: right; padding: 4px 12px 4px 8px; color: #404858; user-select: none; border-right: 1px solid var(--border); vertical-align: top; }
+  table.code-table td.code { padding: 4px 16px; white-space: pre; color: var(--text); vertical-align: top; }
+  table.code-table td.expl { padding: 4px 16px 4px 12px; color: var(--muted); font-family: var(--sans); font-size: 12px; border-left: 1px solid var(--border); min-width: 260px; max-width: 340px; vertical-align: top; line-height: 1.5; }
+  table.code-table td.expl .tag { display: inline-block; font-size: 10px; font-family: var(--mono); padding: 1px 5px; border-radius: 4px; margin-bottom: 2px; }
+  .tag-key { background: #2a1f00; color: var(--yellow); }
+  .tag-imp { background: var(--red-bg); color: var(--red); }
+  .tag-tip { background: var(--purple-bg); color: var(--purple); }
+
+  /* syntax highlight classes */
+  .kw { color: #ff7b72; }   /* keywords: from, import, if, def, class, return */
+  .fn { color: #d2a8ff; }   /* function names */
+  .str { color: #a5d6ff; }  /* strings */
+  .cmt { color: #8b949e; font-style: italic; } /* comments */
+  .cls { color: #ffa657; }  /* class names */
+  .dj { color: #79c0ff; }   /* django template tags */
+  .num { color: #f0883e; }  /* numbers */
+  .op { color: #ff7b72; }   /* operators */
+  .var { color: var(--text); } /* variables */
+  .attr { color: #79c0ff; }  /* attributes */
+
+  .qa-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .qa-q { padding: 12px 16px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; }
+  .qa-q:hover { background: var(--bg3); }
+  .qa-icon { color: var(--orange); font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .qa-q p { font-size: 13px; font-weight: 500; color: var(--text); }
+  .qa-a { padding: 12px 16px; background: #0d1117; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); display: none; line-height: 1.6; }
+  .qa-a.open { display: block; }
+  .qa-a code { font-family: var(--mono); font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--text); }
+
+  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; }
+  .alert-green { background: var(--green-bg); border: 1px solid #1a4d2e; color: var(--green); }
+  .alert-orange { background: var(--orange-bg); border: 1px solid #4d3800; color: var(--orange); }
+  .alert-red { background: var(--red-bg); border: 1px solid #5a1a1a; color: var(--red); }
+  .alert strong { font-weight: 600; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  @media (max-width: 768px) {
+    nav { display: none; }
+    main { padding: 16px; }
+    table.code-table td.expl { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ILKAN</div>
+  <h1>Révision entretien — SAÉ Gestion des Notes</h1>
+  <span>Ligne par ligne</span>
+</header>
+
+<div class="layout">
+<nav>
+  <div class="nav-group">
+    <div class="nav-label">Ton code (🟢)</div>
+    <a class="mine" href="#models">models.py</a>
+    <a class="mine" href="#forms">forms.py</a>
+    <a class="mine" href="#views-accueil">views — accueil()</a>
+    <a class="mine" href="#views-etudiant">views — CRUD Étudiants</a>
+    <a class="mine" href="#views-enseignant">views — CRUD Enseignants</a>
+    <a class="mine" href="#views-ue">views — CRUD UE</a>
+    <a class="mine" href="#urls">urls_*.py</a>
+    <a class="mine" href="#templates">Templates HTML</a>
+    <a class="mine" href="#settings">settings.py</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Autres (🔵)</div>
+    <a class="other" href="#hussain">Hussain (résumé)</a>
+    <a class="other" href="#rafael">Rafael (résumé)</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Entretien</div>
+    <a href="#qa">Questions probables</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════
+     MODELS.PY
+═══════════════════════════════════════════════ -->
+<div class="section" id="models">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>models.py</h2>
+  <p class="subtitle">Tu as écrit les 3 premiers modèles. Les modèles Ressource / Examen / Note sont là pour que les migrations fonctionnent — tu dois juste savoir à quoi ils servent.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>models.py</span> — imports</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.db <span class="kw">import</span> models</td><td class="expl">Importe le module Django qui permet de créer des modèles (= des tables SQL)</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="kw">from</span> django.core.validators <span class="kw">import</span> MinValueValidator, MaxValueValidator</td><td class="expl"><span class="tag tag-key">KEY</span> Importations pour valider les valeurs : MinValue vérifie qu'une valeur est ≥ N, MaxValue vérifie ≤ N. Utilisé pour les crédits ECTS et les notes.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>models.py</span> — classe Etudiant</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">Etudiant</span>(models.Model):</td><td class="expl"><span class="tag tag-key">KEY</span> Déclare un modèle Django. Django va créer automatiquement une table SQL nommée <code>etudiants</code> (défini dans Meta).</td></tr>
+        <tr><td class="ln">2</td><td class="code">    numero_etudiant = models.CharField(</td><td class="expl">CharField = colonne de type texte (VARCHAR en SQL). Ici c'est le numéro étudiant ex: "22015487".</td></tr>
+        <tr><td class="ln">3</td><td class="code">        max_length=<span class="num">20</span>,</td><td class="expl">Taille max 20 caractères dans la base.</td></tr>
+        <tr><td class="ln">4</td><td class="code">        primary_key=<span class="kw">True</span>,</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> On force le numéro étudiant comme clé primaire. Normalement Django crée un id auto, ici on utilise le vrai numéro. Consequence : <code>pk</code> = <code>numero_etudiant</code>.</td></tr>
+        <tr><td class="ln">5</td><td class="code">        verbose_name=<span class="str">"N° étudiant"</span></td><td class="expl">Label affiché dans les formulaires et l'admin Django.</td></tr>
+        <tr><td class="ln">6</td><td class="code">    )</td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code">    nom = models.CharField(max_length=<span class="num">100</span>, verbose_name=<span class="str">"Nom"</span>)</td><td class="expl">Simple colonne texte 100 caractères max.</td></tr>
+        <tr><td class="ln">8</td><td class="code">    prenom = models.CharField(max_length=<span class="num">100</span>, verbose_name=<span class="str">"Prénom"</span>)</td><td class="expl">Idem.</td></tr>
+        <tr><td class="ln">9</td><td class="code">    groupe = models.CharField(max_length=<span class="num">20</span>, verbose_name=<span class="str">"Groupe"</span>)</td><td class="expl">Ex: "BUT-RT-1A".</td></tr>
+        <tr><td class="ln">10</td><td class="code">    email = models.EmailField(unique=<span class="kw">True</span>, verbose_name=<span class="str">"Email"</span>)</td><td class="expl"><span class="tag tag-key">KEY</span> EmailField valide le format email. <code>unique=True</code> = contrainte SQL UNIQUE, deux étudiants ne peuvent pas avoir le même email.</td></tr>
+        <tr><td class="ln">11</td><td class="code">    photo = models.ImageField(</td><td class="expl"><span class="tag tag-tip">TIP</span> ImageField = fichier image. Django vérifie que c'est bien une image (Pillow requis).</td></tr>
+        <tr><td class="ln">12</td><td class="code">        upload_to=<span class="str">'photos_etudiants/'</span>,</td><td class="expl">Sous-dossier où seront stockées les photos dans <code>MEDIA_ROOT</code>.</td></tr>
+        <tr><td class="ln">13</td><td class="code">        blank=<span class="kw">True</span>, null=<span class="kw">True</span>,</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>blank=True</code> = champ optionnel dans les formulaires. <code>null=True</code> = la colonne peut être NULL en base SQL. Les deux sont nécessaires pour rendre un champ vraiment optionnel.</td></tr>
+        <tr><td class="ln">14</td><td class="code">    )</td><td class="expl"></td></tr>
+        <tr><td class="ln">15</td><td class="code">    <span class="kw">class</span> <span class="cls">Meta</span>:</td><td class="expl">Classe interne qui configure le comportement du modèle.</td></tr>
+        <tr><td class="ln">16</td><td class="code">        db_table = <span class="str">'etudiants'</span></td><td class="expl">Force le nom de la table SQL à <code>etudiants</code>. Sans ça, Django l'appelerait <code>notes_app_etudiant</code>.</td></tr>
+        <tr><td class="ln">17</td><td class="code">        ordering = [<span class="str">'nom'</span>, <span class="str">'prenom'</span>]</td><td class="expl">Tri par défaut de toutes les requêtes : par nom puis prénom alphabétiquement.</td></tr>
+        <tr><td class="ln">18</td><td class="code">    <span class="kw">def</span> <span class="fn">__str__</span>(self):</td><td class="expl"><span class="tag tag-key">KEY</span> Méthode appelée quand on affiche un étudiant (ex: dans un select de formulaire). Retourne "Prénom Nom (numéro)".</td></tr>
+        <tr><td class="ln">19</td><td class="code">        <span class="kw">return</span> <span class="str">f"{self.prenom} {self.nom} ({self.numero_etudiant})"</span></td><td class="expl">f-string Python : intègre les variables directement dans la chaîne.</td></tr>
+        <tr><td class="ln">20</td><td class="code">    <span class="kw">def</span> <span class="fn">get_initiales</span>(self):</td><td class="expl">Méthode personnalisée : retourne les initiales ex "IL" pour Ilkan Guney. Utilisée dans le template pour l'avatar quand il n'y a pas de photo.</td></tr>
+        <tr><td class="ln">21</td><td class="code">        <span class="kw">return</span> <span class="str">f"{self.prenom[0]}{self.nom[0]}"</span>.upper()</td><td class="expl"><code>prenom[0]</code> = premier caractère du prénom. <code>.upper()</code> = met en majuscules.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>models.py</span> — classe Enseignant</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">Enseignant</span>(models.Model):</td><td class="expl">Modèle simple : juste un id auto + nom + prénom.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    id_enseignant = models.AutoField(primary_key=<span class="kw">True</span>)</td><td class="expl"><span class="tag tag-imp">DIFFÉRENCE</span> Ici la PK c'est un entier auto-incrémenté (1, 2, 3...). Contrairement à Etudiant où la PK c'est le numéro étudiant.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    nom = models.CharField(max_length=<span class="num">100</span>, verbose_name=<span class="str">"Nom"</span>)</td><td class="expl">Même principe que pour Etudiant.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    prenom = models.CharField(max_length=<span class="num">100</span>, verbose_name=<span class="str">"Prénom"</span>)</td><td class="expl"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>models.py</span> — classe UE</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">class</span> <span class="cls">UE</span>(models.Model):</td><td class="expl">Unité d'Enseignement.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    SEMESTRES = [</td><td class="expl"><span class="tag tag-key">KEY</span> Liste de tuples Python. C'est les "choices" du champ semestre. Format : (valeur_en_base, label_affiché).</td></tr>
+        <tr><td class="ln">3</td><td class="code">        (<span class="str">'S1'</span>, <span class="str">'Semestre 1'</span>),</td><td class="expl">"S1" sera stocké en base, "Semestre 1" sera affiché dans les formulaires et templates via <code>get_semestre_display</code>.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    ]</td><td class="expl"></td></tr>
+        <tr><td class="ln">5</td><td class="code">    code_ue = models.CharField(max_length=<span class="num">20</span>, primary_key=<span class="kw">True</span>, ...)</td><td class="expl">Même principe qu'Etudiant : le code UE est la PK. Ex: "R1.01".</td></tr>
+        <tr><td class="ln">6</td><td class="code">    semestre = models.CharField(max_length=<span class="num">2</span>, choices=SEMESTRES, ...)</td><td class="expl"><code>choices=SEMESTRES</code> : Django ne stocke que "S1"/"S2" etc. et génère un &lt;select&gt; dans les formulaires.</td></tr>
+        <tr><td class="ln">7</td><td class="code">    credits_ects = models.PositiveSmallIntegerField(</td><td class="expl">Entier positif court (0 à 32767).</td></tr>
+        <tr><td class="ln">8</td><td class="code">        validators=[MinValueValidator(<span class="num">1</span>), MaxValueValidator(<span class="num">30</span>)]</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Validation : refus si valeur < 1 ou > 30. Django vérifie au niveau du formulaire ET avant la sauvegarde en base.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     FORMS.PY
+═══════════════════════════════════════════════ -->
+<div class="section" id="forms">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>forms.py</h2>
+  <p class="subtitle">3 formulaires que tu as écrits. Le principe est identique pour les 3.</p>
+
+  <div class="alert alert-green">
+    <strong>Le principe d'un ModelForm :</strong> Django lit le modèle et génère automatiquement les champs HTML. Tu personnalises juste les widgets (apparence) et les labels (textes).
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>forms.py</span> — EtudiantForm</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django <span class="kw">import</span> forms</td><td class="expl">Importe le module forms de Django.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="kw">from</span> .models <span class="kw">import</span> Etudiant, Enseignant, UE, ...</td><td class="expl">Le <code>.</code> = import relatif depuis le même dossier (notes_app).</td></tr>
+        <tr><td class="ln">3</td><td class="code"><span class="kw">class</span> <span class="cls">EtudiantForm</span>(forms.ModelForm):</td><td class="expl"><span class="tag tag-key">KEY</span> Hérite de ModelForm. Django fait le travail : il lit le modèle Etudiant et crée les champs automatiquement.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    <span class="kw">class</span> <span class="cls">Meta</span>:</td><td class="expl">Classe interne obligatoire pour configurer le ModelForm.</td></tr>
+        <tr><td class="ln">5</td><td class="code">        model = <span class="cls">Etudiant</span></td><td class="expl">Dit à Django quel modèle utiliser pour créer le formulaire.</td></tr>
+        <tr><td class="ln">6</td><td class="code">        fields = [<span class="str">'numero_etudiant'</span>, <span class="str">'nom'</span>, <span class="str">'prenom'</span>, ...]</td><td class="expl">Liste les champs à inclure. Si tu mets <code>fields = '__all__'</code>, tous les champs du modèle apparaissent.</td></tr>
+        <tr><td class="ln">7</td><td class="code">        widgets = {</td><td class="expl"><span class="tag tag-key">KEY</span> Personnalise le rendu HTML de chaque champ.</td></tr>
+        <tr><td class="ln">8</td><td class="code">            <span class="str">'numero_etudiant'</span>: forms.TextInput(attrs={</td><td class="expl"><code>TextInput</code> = &lt;input type="text"&gt;. <code>attrs</code> = attributs HTML ajoutés.</td></tr>
+        <tr><td class="ln">9</td><td class="code">                <span class="str">'class'</span>: <span class="str">'form-control'</span>,</td><td class="expl">Classe Bootstrap pour le style.</td></tr>
+        <tr><td class="ln">10</td><td class="code">                <span class="str">'placeholder'</span>: <span class="str">'Ex: 22015487'</span></td><td class="expl">Texte grisé dans le champ vide.</td></tr>
+        <tr><td class="ln">11</td><td class="code">            }),</td><td class="expl"></td></tr>
+        <tr><td class="ln">12</td><td class="code">            <span class="str">'email'</span>: forms.EmailInput(attrs={...}),</td><td class="expl"><code>EmailInput</code> = &lt;input type="email"&gt;, le navigateur valide le format.</td></tr>
+        <tr><td class="ln">13</td><td class="code">            <span class="str">'photo'</span>: forms.ClearableFileInput(attrs={...}),</td><td class="expl"><span class="tag tag-tip">TIP</span> <code>ClearableFileInput</code> génère un input file + une case "supprimer la photo". Important pour la modification.</td></tr>
+        <tr><td class="ln">14</td><td class="code">        }</td><td class="expl"></td></tr>
+        <tr><td class="ln">15</td><td class="code">        labels = { <span class="str">'numero_etudiant'</span>: <span class="str">'N° étudiant'</span>, ... }</td><td class="expl">Texte des &lt;label&gt; dans le formulaire. Remplace les noms de champs.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     VIEWS — ACCUEIL
+═══════════════════════════════════════════════ -->
+<div class="section" id="views-accueil">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>views.py — accueil()</h2>
+  <p class="subtitle">La page d'accueil avec les statistiques du dashboard.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>views.py</span> — accueil</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.shortcuts <span class="kw">import</span> render, get_object_or_404, redirect</td><td class="expl"><code>render</code> = renvoie une page HTML. <code>get_object_or_404</code> = récupère un objet ou renvoie erreur 404. <code>redirect</code> = redirige vers une autre URL.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="kw">from</span> django.contrib <span class="kw">import</span> messages</td><td class="expl">Système de messages flash Django (succès, erreur...). Ils s'affichent une seule fois puis disparaissent.</td></tr>
+        <tr><td class="ln">3</td><td class="code"><span class="kw">from</span> django.db.models <span class="kw">import</span> Q</td><td class="expl"><span class="tag tag-key">KEY</span> <code>Q</code> permet les requêtes complexes avec OR/AND. Ex: <code>Q(nom=x) | Q(prenom=x)</code>.</td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="kw">from</span> .models <span class="kw">import</span> Etudiant, Enseignant, UE, ...</td><td class="expl">Importe tous les modèles pour pouvoir faire des requêtes.</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="kw">def</span> <span class="fn">accueil</span>(request):</td><td class="expl">Une vue Django = une fonction Python qui reçoit une requête HTTP et retourne une réponse HTML.</td></tr>
+        <tr><td class="ln">6</td><td class="code">    context = {</td><td class="expl">Dictionnaire Python qui sera envoyé au template. Les clés deviennent des variables dans le HTML.</td></tr>
+        <tr><td class="ln">7</td><td class="code">        <span class="str">'nb_etudiants'</span>: Etudiant.objects.count(),</td><td class="expl"><span class="tag tag-key">KEY</span> <code>.objects</code> = gestionnaire de requêtes Django (ORM). <code>.count()</code> = SELECT COUNT(*) FROM etudiants. Retourne un entier.</td></tr>
+        <tr><td class="ln">8</td><td class="code">        <span class="str">'nb_enseignants'</span>: Enseignant.objects.count(),</td><td class="expl">Idem pour les enseignants.</td></tr>
+        <tr><td class="ln">9</td><td class="code">        <span class="str">'nb_ue'</span>: UE.objects.count(),</td><td class="expl">Idem pour les UE.</td></tr>
+        <tr><td class="ln">10</td><td class="code">        <span class="str">'nb_examens'</span>: Examen.objects.count(),</td><td class="expl">Idem pour les examens.</td></tr>
+        <tr><td class="ln">11</td><td class="code">        <span class="str">'derniers_etudiants'</span>: Etudiant.objects.order_by(<span class="str">'-pk'</span>)[:<span class="num">5</span>],</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>order_by('-pk')</code> = tri décroissant par clé primaire (le - = DESC). <code>[:5]</code> = LIMIT 5. Retourne les 5 derniers ajoutés.</td></tr>
+        <tr><td class="ln">12</td><td class="code">    }</td><td class="expl"></td></tr>
+        <tr><td class="ln">13</td><td class="code">    <span class="kw">return</span> <span class="fn">render</span>(request, <span class="str">'notes_app/accueil.html'</span>, context)</td><td class="expl"><code>render</code> combine le template HTML avec le context et retourne la page au navigateur.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     VIEWS — CRUD ÉTUDIANTS
+═══════════════════════════════════════════════ -->
+<div class="section" id="views-etudiant">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>views.py — CRUD Étudiants</h2>
+  <p class="subtitle">5 vues : liste, détail, créer, modifier, supprimer. C'est ton gros morceau.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>etudiant_liste()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_liste</span>(request):</td><td class="expl">Vue appelée quand on va sur /etudiants/</td></tr>
+        <tr><td class="ln">2</td><td class="code">    query = request.GET.get(<span class="str">'q'</span>, <span class="str">''</span>)</td><td class="expl"><span class="tag tag-key">KEY</span> Lit le paramètre <code>q</code> dans l'URL (ex: <code>/etudiants/?q=dupont</code>). Si absent, retourne ''. C'est la barre de recherche.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    etudiants = Etudiant.objects.all()</td><td class="expl">Récupère TOUS les étudiants de la base. SQL: <code>SELECT * FROM etudiants</code>. C'est un QuerySet (= liste paresseuse, pas encore exécutée).</td></tr>
+        <tr><td class="ln">4</td><td class="code">    <span class="kw">if</span> query:</td><td class="expl">Si l'utilisateur a tapé quelque chose dans la recherche...</td></tr>
+        <tr><td class="ln">5</td><td class="code">        etudiants = etudiants.filter(</td><td class="expl"><span class="tag tag-key">KEY</span> <code>.filter()</code> = WHERE en SQL. On affine le QuerySet précédent, ça ne refait pas de requête SQL séparée.</td></tr>
+        <tr><td class="ln">6</td><td class="code">            Q(nom__icontains=query) |</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>Q()</code> = opérateur logique. <code>__icontains</code> = LIKE '%query%' insensible à la casse. Le <code>|</code> = OR.</td></tr>
+        <tr><td class="ln">7</td><td class="code">            Q(prenom__icontains=query) |</td><td class="expl">OU recherche dans le prénom.</td></tr>
+        <tr><td class="ln">8</td><td class="code">            Q(numero_etudiant__icontains=query) |</td><td class="expl">OU dans le numéro.</td></tr>
+        <tr><td class="ln">9</td><td class="code">            Q(groupe__icontains=query)</td><td class="expl">OU dans le groupe.</td></tr>
+        <tr><td class="ln">10</td><td class="code">        )</td><td class="expl">Au total : 1 seule requête SQL avec 4 conditions OR.</td></tr>
+        <tr><td class="ln">11</td><td class="code">    context = { <span class="str">'etudiants'</span>: etudiants, <span class="str">'query'</span>: query, ... }</td><td class="expl">On envoie la liste filtrée ET la query au template (pour re-afficher ce qui était tapé dans le champ de recherche).</td></tr>
+        <tr><td class="ln">12</td><td class="code">    <span class="kw">return</span> <span class="fn">render</span>(request, <span class="str">'notes_app/etudiant_liste.html'</span>, context)</td><td class="expl">Renvoie la page HTML.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>etudiant_creer()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_creer</span>(request):</td><td class="expl">Vue pour créer un étudiant. Gère 2 cas : GET (afficher le formulaire vide) et POST (traiter les données envoyées).</td></tr>
+        <tr><td class="ln">2</td><td class="code">    <span class="kw">if</span> request.method == <span class="str">'POST'</span>:</td><td class="expl"><span class="tag tag-key">KEY</span> On vérifie si l'utilisateur a soumis le formulaire (clic sur "Enregistrer") ou juste ouvert la page.</td></tr>
+        <tr><td class="ln">3</td><td class="code">        form = <span class="cls">EtudiantForm</span>(request.POST, request.FILES)</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>request.POST</code> = données texte du formulaire. <code>request.FILES</code> = fichiers uploadés (la photo). Les deux sont nécessaires quand il y a un upload.</td></tr>
+        <tr><td class="ln">4</td><td class="code">        <span class="kw">if</span> form.is_valid():</td><td class="expl"><span class="tag tag-key">KEY</span> Vérifie les validators, les champs requis, l'unicité de l'email... Si tout est bon, renvoie True.</td></tr>
+        <tr><td class="ln">5</td><td class="code">            etudiant = form.save()</td><td class="expl">Crée l'objet Etudiant et le sauvegarde en base SQL. Retourne l'objet créé.</td></tr>
+        <tr><td class="ln">6</td><td class="code">            messages.success(request, <span class="str">f'Étudiant {etudiant.prenom} {etudiant.nom} ajouté.'</span>)</td><td class="expl">Message flash stocké en session. S'affichera une seule fois sur la prochaine page.</td></tr>
+        <tr><td class="ln">7</td><td class="code">            <span class="kw">return</span> <span class="fn">redirect</span>(<span class="str">'etudiant_liste'</span>)</td><td class="expl"><span class="tag tag-tip">TIP</span> Redirige vers la liste. Pattern PRG (Post-Redirect-Get) : évite le re-soumission du formulaire si on recharge la page.</td></tr>
+        <tr><td class="ln">8</td><td class="code">        <span class="kw">else</span>:</td><td class="expl">Si le formulaire est invalide...</td></tr>
+        <tr><td class="ln">9</td><td class="code">            messages.error(request, <span class="str">'Erreur dans le formulaire...'</span>)</td><td class="expl">Message d'erreur flash.</td></tr>
+        <tr><td class="ln">10</td><td class="code">    <span class="kw">else</span>:</td><td class="expl">Si c'est un GET (simple visite de la page)...</td></tr>
+        <tr><td class="ln">11</td><td class="code">        form = <span class="cls">EtudiantForm</span>()</td><td class="expl">Crée un formulaire VIDE (sans données).</td></tr>
+        <tr><td class="ln">12</td><td class="code">    <span class="kw">return</span> <span class="fn">render</span>(request, <span class="str">'notes_app/etudiant_form.html'</span>, {<span class="str">'form'</span>: form, ...})</td><td class="expl">Dans tous les cas (GET ou POST invalide) : on affiche le formulaire. Si POST invalide, le form contient les erreurs.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>etudiant_modifier()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_modifier</span>(request, pk):</td><td class="expl"><span class="tag tag-key">KEY</span> <code>pk</code> = clé primaire passée dans l'URL (ex: /etudiants/22015487/modifier/). Django extrait "22015487" et le passe ici.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    etudiant = <span class="fn">get_object_or_404</span>(Etudiant, pk=pk)</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Cherche l'étudiant avec ce pk. Si introuvable → renvoie automatiquement une page d'erreur 404 sans planter le serveur. Sans ça, on aurait un crash si l'URL est mauvaise.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    <span class="kw">if</span> request.method == <span class="str">'POST'</span>:</td><td class="expl">Même logique que creer().</td></tr>
+        <tr><td class="ln">4</td><td class="code">        form = <span class="cls">EtudiantForm</span>(request.POST, request.FILES, instance=etudiant)</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> La différence avec creer() : <code>instance=etudiant</code>. Ça dit à Django "modifie cet objet existant au lieu d'en créer un nouveau". Sans ça, <code>form.save()</code> créerait un doublon.</td></tr>
+        <tr><td class="ln">5</td><td class="code">        <span class="kw">if</span> form.is_valid():</td><td class="expl"></td></tr>
+        <tr><td class="ln">6</td><td class="code">            form.save()</td><td class="expl">UPDATE en SQL (au lieu d'un INSERT pour creer()).</td></tr>
+        <tr><td class="ln">7</td><td class="code">    <span class="kw">else</span>:</td><td class="expl"></td></tr>
+        <tr><td class="ln">8</td><td class="code">        form = <span class="cls">EtudiantForm</span>(instance=etudiant)</td><td class="expl">Formulaire PRÉ-REMPLI avec les données de l'étudiant. L'utilisateur voit les valeurs actuelles.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>etudiant_supprimer()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">etudiant_supprimer</span>(request, pk):</td><td class="expl">Vue de suppression.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    etudiant = <span class="fn">get_object_or_404</span>(Etudiant, pk=pk)</td><td class="expl">Récupère l'étudiant ou 404.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    <span class="kw">if</span> request.method == <span class="str">'POST'</span>:</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> La suppression ne se fait QUE sur POST, jamais sur GET. Pourquoi ? Si on supprimait sur GET, un simple lien ou un bot qui crawle le site pourrait tout supprimer. POST = l'utilisateur a confirmé en cliquant le bouton.</td></tr>
+        <tr><td class="ln">4</td><td class="code">        nom_complet = <span class="str">f'{etudiant.prenom} {etudiant.nom}'</span></td><td class="expl">On sauvegarde le nom AVANT de supprimer, pour le message de confirmation.</td></tr>
+        <tr><td class="ln">5</td><td class="code">        etudiant.delete()</td><td class="expl">DELETE FROM etudiants WHERE numero_etudiant = pk. Suppression en base SQL.</td></tr>
+        <tr><td class="ln">6</td><td class="code">        messages.success(request, <span class="str">f'Étudiant {nom_complet} supprimé.'</span>)</td><td class="expl"></td></tr>
+        <tr><td class="ln">7</td><td class="code">        <span class="kw">return</span> <span class="fn">redirect</span>(<span class="str">'etudiant_liste'</span>)</td><td class="expl"></td></tr>
+        <tr><td class="ln">8</td><td class="code">    <span class="kw">return</span> <span class="fn">render</span>(request, <span class="str">'notes_app/confirmer_suppression.html'</span>, {...})</td><td class="expl">Si GET : affiche la page de confirmation "Êtes-vous sûr ?". Ce n'est qu'après le clic sur "Confirmer" (POST) que la suppression a lieu.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     VIEWS — CRUD ENSEIGNANTS
+═══════════════════════════════════════════════ -->
+<div class="section" id="views-enseignant">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>views.py — CRUD Enseignants</h2>
+  <p class="subtitle">Même pattern exact que les étudiants. Pas de photo, pas de detail(). La PK est un int auto (id_enseignant) au lieu d'une string.</p>
+
+  <div class="alert alert-orange">
+    <strong>Différence clé à connaître :</strong> pour les enseignants, la PK est un entier auto (<code>id_enseignant = AutoField</code>). Pour les étudiants c'est une string (<code>numero_etudiant = CharField, primary_key=True</code>). C'est pour ça que dans les URLs les enseignants ont <code>&lt;int:pk&gt;</code> et les étudiants <code>&lt;str:pk&gt;</code>.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>enseignant_creer()</span> — même logique</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">enseignant_creer</span>(request):</td><td class="expl">Identique à etudiant_creer() mais avec EtudiantForm → EnseignantForm.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    form = <span class="cls">EnseignantForm</span>(request.POST)</td><td class="expl"><span class="tag tag-imp">DIFFÉRENCE</span> Pas de <code>request.FILES</code> car il n'y a pas de photo pour un enseignant.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    <span class="kw">if</span> form.is_valid(): form.save()</td><td class="expl">Exactement pareil.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     VIEWS — CRUD UE
+═══════════════════════════════════════════════ -->
+<div class="section" id="views-ue">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>views.py — CRUD UE</h2>
+  <p class="subtitle">Même pattern + filtre par semestre en plus.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>ue_liste()</span> — filtre double</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">ue_liste</span>(request):</td><td class="expl"></td></tr>
+        <tr><td class="ln">2</td><td class="code">    query = request.GET.get(<span class="str">'q'</span>, <span class="str">''</span>)</td><td class="expl">Recherche texte, même principe que etudiant_liste.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    semestre = request.GET.get(<span class="str">'semestre'</span>, <span class="str">''</span>)</td><td class="expl"><span class="tag tag-key">KEY</span> Deuxième filtre : lit le paramètre <code>semestre</code> de l'URL (ex: <code>?semestre=S1</code>). Les boutons S1/S2... dans la page génèrent cette URL.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    ues = UE.objects.all()</td><td class="expl">Toutes les UE au départ.</td></tr>
+        <tr><td class="ln">5</td><td class="code">    <span class="kw">if</span> query:</td><td class="expl">Si texte tapé : filtre par code ou nom.</td></tr>
+        <tr><td class="ln">6</td><td class="code">        ues = ues.filter(Q(code_ue__icontains=query) | Q(nom__icontains=query))</td><td class="expl">Pareil qu'avant mais sur 2 champs seulement.</td></tr>
+        <tr><td class="ln">7</td><td class="code">    <span class="kw">if</span> semestre:</td><td class="expl">Si un semestre est sélectionné...</td></tr>
+        <tr><td class="ln">8</td><td class="code">        ues = ues.filter(semestre=semestre)</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Filtre exact (pas icontains). <code>semestre="S1"</code> → WHERE semestre = 'S1'. Les deux filtres peuvent s'enchaîner : recherche texte ET semestre en même temps.</td></tr>
+        <tr><td class="ln">9</td><td class="code">    semestres = UE.SEMESTRES</td><td class="expl">Envoie la liste des semestres au template pour afficher les boutons de filtre.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>ue_detail()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">def</span> <span class="fn">ue_detail</span>(request, pk):</td><td class="expl">Affiche une UE et ses ressources associées.</td></tr>
+        <tr><td class="ln">2</td><td class="code">    ue = <span class="fn">get_object_or_404</span>(UE, pk=pk)</td><td class="expl">Récupère l'UE ou 404.</td></tr>
+        <tr><td class="ln">3</td><td class="code">    ressources = ue.ressources.all()</td><td class="expl"><span class="tag tag-tip">TIP</span> <code>ue.ressources</code> = accès inverse via la ForeignKey. Dans Ressource, il y a <code>ue = ForeignKey(UE, related_name='ressources')</code>. Django crée automatiquement ce lien inverse. C'est comme dire "donne-moi toutes les ressources qui pointent vers cette UE".</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     URLS
+═══════════════════════════════════════════════ -->
+<div class="section" id="urls">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>urls_etudiants.py / urls_enseignants.py / urls_ue.py</h2>
+  <p class="subtitle">Tu as créé 3 fichiers d'URLs séparés pour mieux organiser le code.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">notes_app/<span>urls_etudiants.py</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="kw">from</span> django.urls <span class="kw">import</span> path</td><td class="expl">Importe la fonction path() pour définir des routes URL.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="kw">from</span> . <span class="kw">import</span> views</td><td class="expl">Importe toutes les vues depuis le même dossier.</td></tr>
+        <tr><td class="ln">3</td><td class="code">urlpatterns = [</td><td class="expl">Liste des routes. Django les lit dans l'ordre et s'arrête à la première qui correspond.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    path(<span class="str">''</span>, views.etudiant_liste, name=<span class="str">'etudiant_liste'</span>),</td><td class="expl">URL vide = /etudiants/ (car ce fichier est inclus sous 'etudiants/' dans urls.py principal).</td></tr>
+        <tr><td class="ln">5</td><td class="code">    path(<span class="str">'ajouter/'</span>, views.etudiant_creer, name=<span class="str">'etudiant_creer'</span>),</td><td class="expl">URL /etudiants/ajouter/</td></tr>
+        <tr><td class="ln">6</td><td class="code">    path(<span class="str">'&lt;str:pk&gt;/'</span>, views.etudiant_detail, name=<span class="str">'etudiant_detail'</span>),</td><td class="expl"><span class="tag tag-key">KEY</span> <code>&lt;str:pk&gt;</code> = paramètre dynamique de type string. Django capture "22015487" et le passe à la vue comme argument <code>pk</code>. <code>str</code> car le numéro étudiant est une string.</td></tr>
+        <tr><td class="ln">7</td><td class="code">    path(<span class="str">'&lt;str:pk&gt;/modifier/'</span>, views.etudiant_modifier, ...),</td><td class="expl">URL /etudiants/22015487/modifier/</td></tr>
+        <tr><td class="ln">8</td><td class="code">    path(<span class="str">'&lt;str:pk&gt;/supprimer/'</span>, views.etudiant_supprimer, ...),</td><td class="expl">URL /etudiants/22015487/supprimer/</td></tr>
+        <tr><td class="ln">9</td><td class="code">]</td><td class="expl"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">project_config/<span>urls.py</span> — inclusion</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code">path(<span class="str">'etudiants/'</span>, include(<span class="str">'notes_app.urls_etudiants'</span>)),</td><td class="expl"><span class="tag tag-key">KEY</span> <code>include()</code> délègue toutes les URLs qui commencent par "etudiants/" vers le fichier urls_etudiants.py. C'est comme dire "pour tout ce qui commence par /etudiants/, va voir dans ce fichier".</td></tr>
+        <tr><td class="ln">2</td><td class="code">path(<span class="str">'enseignants/'</span>, include(<span class="str">'notes_app.urls_enseignants'</span>)),</td><td class="expl">Idem pour /enseignants/</td></tr>
+        <tr><td class="ln">3</td><td class="code">path(<span class="str">'ue/'</span>, include(<span class="str">'notes_app.urls_ue'</span>)),</td><td class="expl">Idem pour /ue/</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     TEMPLATES
+═══════════════════════════════════════════════ -->
+<div class="section" id="templates">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>Templates HTML</h2>
+  <p class="subtitle">Les fichiers HTML avec la syntaxe template Django (balises <code>{% %}</code> et variables <code>{{ }}</code>).</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename"><span>etudiant_liste.html</span> — extraits clés</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code"><span class="dj">{% extends 'notes_app/base.html' %}</span></td><td class="expl"><span class="tag tag-key">KEY</span> Héritage de template. Ce fichier "étend" base.html. Il ne réécrit que les blocs définis ci-dessous, tout le reste (navigation, CSS, structure) vient de base.html.</td></tr>
+        <tr><td class="ln">2</td><td class="code"><span class="dj">{% block content %}</span> ... <span class="dj">{% endblock %}</span></td><td class="expl">Remplace le bloc "content" défini dans base.html. C'est le contenu principal de la page.</td></tr>
+        <tr><td class="ln">3</td><td class="code"><span class="dj">{% for etudiant in etudiants %}</span></td><td class="expl">Boucle for Django. Génère une ligne de tableau pour chaque étudiant dans le context.</td></tr>
+        <tr><td class="ln">4</td><td class="code"><span class="dj">{{ etudiant.prenom }}</span> <span class="dj">{{ etudiant.nom }}</span></td><td class="expl">Double accolades = affiche la valeur de la variable. <code>etudiant.prenom</code> = accède à l'attribut prenom de l'objet etudiant.</td></tr>
+        <tr><td class="ln">5</td><td class="code"><span class="dj">{% if etudiant.photo %}</span></td><td class="expl">Condition Django. Vérifie si le champ photo est rempli.</td></tr>
+        <tr><td class="ln">6</td><td class="code">  &lt;img src="<span class="dj">{{ etudiant.photo.url }}</span>"&gt;</td><td class="expl"><code>.url</code> = Django génère l'URL publique du fichier uploadé (ex: /media/photos_etudiants/photo.jpg).</td></tr>
+        <tr><td class="ln">7</td><td class="code">  &lt;div&gt;<span class="dj">{{ etudiant.get_initiales }}</span>&lt;/div&gt;</td><td class="expl"><span class="tag tag-tip">TIP</span> Appel de ta méthode Python depuis le template. Django appelle <code>get_initiales()</code> et affiche le résultat. Dans les templates on n'écrit pas les parenthèses.</td></tr>
+        <tr><td class="ln">8</td><td class="code">&lt;a href="<span class="dj">{% url 'etudiant_modifier' etudiant.pk %}</span>"&gt;</td><td class="expl"><span class="tag tag-key">KEY</span> <code>{% url %}</code> génère une URL à partir d'un nom. <code>'etudiant_modifier'</code> correspond au <code>name=</code> dans urls.py. <code>etudiant.pk</code> est l'argument dynamique. Résultat : /etudiants/22015487/modifier/</td></tr>
+        <tr><td class="ln">9</td><td class="code"><span class="dj">{% endfor %}</span></td><td class="expl">Fin de la boucle for.</td></tr>
+        <tr><td class="ln">10</td><td class="code"><span class="dj">{% if query %}Aucun résultat pour "{{ query }}"{% endif %}</span></td><td class="expl">Message différent selon si l'utilisateur cherchait quelque chose ou non.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename"><span>etudiant_form.html</span> — le formulaire</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code">&lt;form method="post" enctype="multipart/form-data"&gt;</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> <code>enctype="multipart/form-data"</code> est OBLIGATOIRE quand il y a un upload de fichier. Sans ça, la photo n'est pas envoyée au serveur.</td></tr>
+        <tr><td class="ln">2</td><td class="code">  <span class="dj">{% csrf_token %}</span></td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Protection CSRF (Cross-Site Request Forgery). Django génère un token secret dans le formulaire et vérifie qu'il correspond à la soumission. Empêche les attaques où un autre site soumet des formulaires à ta place.</td></tr>
+        <tr><td class="ln">3</td><td class="code">  <span class="dj">{% for field in form %}</span></td><td class="expl">Boucle sur tous les champs du formulaire Django.</td></tr>
+        <tr><td class="ln">4</td><td class="code">    &lt;label for="<span class="dj">{{ field.id_for_label }}</span>"&gt;<span class="dj">{{ field.label }}</span>&lt;/label&gt;</td><td class="expl"><code>id_for_label</code> = l'id HTML du champ. <code>label</code> = le texte du label (défini dans forms.py).</td></tr>
+        <tr><td class="ln">5</td><td class="code">    <span class="dj">{{ field }}</span></td><td class="expl">Affiche le champ HTML complet (input, select...) avec les attributs définis dans widgets.</td></tr>
+        <tr><td class="ln">6</td><td class="code">    <span class="dj">{% for error in field.errors %}</span><span class="dj">{{ error }}</span><span class="dj">{% endfor %}</span></td><td class="expl">Affiche les erreurs de validation sous chaque champ (ex: "Ce champ est requis").</td></tr>
+        <tr><td class="ln">7</td><td class="code">  <span class="dj">{% endfor %}</span></td><td class="expl"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename"><span>confirmer_suppression.html</span> — page de confirmation</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code">Êtes-vous sûr de vouloir supprimer <span class="dj">{{ type }}</span> &lt;strong&gt;<span class="dj">{{ objet }}</span>&lt;/strong&gt; ?</td><td class="expl"><code>{{ objet }}</code> appelle <code>__str__()</code> du modèle. Pour un étudiant ça affiche "Prénom Nom (numéro)".</td></tr>
+        <tr><td class="ln">2</td><td class="code">&lt;form method="post"&gt;</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> Le bouton "Confirmer" soumet un POST. C'est ce POST que la vue détecte pour vraiment supprimer. Si l'utilisateur clique "Annuler" c'est un simple lien GET, rien n'est supprimé.</td></tr>
+        <tr><td class="ln">3</td><td class="code">  <span class="dj">{% csrf_token %}</span></td><td class="expl">Obligatoire pour tous les formulaires POST.</td></tr>
+        <tr><td class="ln">4</td><td class="code">  &lt;a href="<span class="dj">{% url retour_url %}</span>"&gt;Annuler&lt;/a&gt;</td><td class="expl">Lien de retour dynamique. La vue passe <code>retour_url='etudiant_liste'</code> dans le context.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     SETTINGS
+═══════════════════════════════════════════════ -->
+<div class="section" id="settings">
+  <div class="section-tag tag-mine">✅ Ton code</div>
+  <h2>settings.py</h2>
+  <p class="subtitle">Configuration générale de Django. Tu as configuré la connexion MySQL.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">project_config/<span>settings.py</span> — base de données</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code">DATABASES = {</td><td class="expl">Configuration de la base de données. Django supporte MySQL, PostgreSQL, SQLite...</td></tr>
+        <tr><td class="ln">2</td><td class="code">    <span class="str">'default'</span>: {</td><td class="expl">Nom de la connexion. On peut en avoir plusieurs (default, archive...).</td></tr>
+        <tr><td class="ln">3</td><td class="code">        <span class="str">'ENGINE'</span>: <span class="str">'django.db.backends.mysql'</span>,</td><td class="expl"><span class="tag tag-key">KEY</span> Driver Django pour MySQL. (Pour SQLite ce serait <code>django.db.backends.sqlite3</code>). Nécessite le paquet <code>mysqlclient</code>.</td></tr>
+        <tr><td class="ln">4</td><td class="code">        <span class="str">'NAME'</span>: <span class="str">'gestion-notes'</span>,</td><td class="expl">Nom de la base de données MySQL.</td></tr>
+        <tr><td class="ln">5</td><td class="code">        <span class="str">'USER'</span>: <span class="str">'ilkan'</span>,</td><td class="expl">Utilisateur MySQL.</td></tr>
+        <tr><td class="ln">6</td><td class="code">        <span class="str">'PASSWORD'</span>: <span class="str">'toto'</span>,</td><td class="expl">Mot de passe MySQL. En prod on mettrait ça dans une variable d'environnement, pas en dur.</td></tr>
+        <tr><td class="ln">7</td><td class="code">        <span class="str">'HOST'</span>: <span class="str">'serveur-notes'</span>,</td><td class="expl"><span class="tag tag-imp">IMPORTANT</span> L'adresse du serveur MySQL. "serveur-notes" = nom DNS de la VM Hussain sur le réseau. C'est pour ça que c'est une archi "DB séparée" : Django est sur une machine, MySQL sur une autre.</td></tr>
+        <tr><td class="ln">8</td><td class="code">        <span class="str">'PORT'</span>: <span class="str">'3306'</span>,</td><td class="expl">Port standard de MySQL.</td></tr>
+        <tr><td class="ln">9</td><td class="code">        <span class="str">'OPTIONS'</span>: { <span class="str">'charset'</span>: <span class="str">'utf8mb4'</span> },</td><td class="expl"><code>utf8mb4</code> = encodage qui supporte les emojis et tous les caractères Unicode. utf8 classique en MySQL est limité à 3 octets (pas les emojis).</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">project_config/<span>settings.py</span> — autres config</span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">1</td><td class="code">INSTALLED_APPS = [..., <span class="str">'notes_app'</span>]</td><td class="expl"><span class="tag tag-key">KEY</span> Enregistre l'application notes_app dans Django. Obligatoire pour que Django trouve les modèles, templates et migrations.</td></tr>
+        <tr><td class="ln">2</td><td class="code">LANGUAGE_CODE = <span class="str">'fr-fr'</span></td><td class="expl">Interface admin et messages Django en français.</td></tr>
+        <tr><td class="ln">3</td><td class="code">MEDIA_URL = <span class="str">'/media/'</span></td><td class="expl">Préfixe d'URL pour les fichiers uploadés (photos).</td></tr>
+        <tr><td class="ln">4</td><td class="code">MEDIA_ROOT = BASE_DIR / <span class="str">'media'</span></td><td class="expl">Dossier physique où stocker les uploads. <code>BASE_DIR / 'media'</code> = dossier "media" à la racine du projet.</td></tr>
+        <tr><td class="ln">5</td><td class="code">DEBUG = <span class="kw">True</span></td><td class="expl">Affiche les erreurs détaillées. En production on mettrait False pour ne pas exposer le code.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     HUSSAIN
+═══════════════════════════════════════════════ -->
+<div class="section" id="hussain">
+  <div class="section-tag tag-other">🔵 Hussain</div>
+  <h2>Ce que Hussain a fait (résumé à connaître)</h2>
+  <p class="subtitle">Tu dois savoir ce que font ces parties globalement, même si tu n'as pas écrit le code.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>CRUD Ressources / Examens / Notes</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">—</td><td class="code">Ressource = matière liée à une UE</td><td class="expl">ForeignKey vers UE (<code>ue = ForeignKey(UE, on_delete=CASCADE)</code>). Si l'UE est supprimée, les ressources associées sont supprimées aussi (CASCADE).</td></tr>
+        <tr><td class="ln">—</td><td class="code">Examen = contrôle lié à une Ressource</td><td class="expl">ForeignKey vers Ressource. Un examen a un titre, une date, un coefficient.</td></tr>
+        <tr><td class="ln">—</td><td class="code">Note = résultat d'un Etudiant à un Examen</td><td class="expl"><code>unique_together = [('etudiant', 'examen')]</code> : un étudiant ne peut avoir qu'une note par examen. Contrainte SQL UNIQUE sur les deux colonnes.</td></tr>
+        <tr><td class="ln">—</td><td class="code">Config Gunicorn + Nginx</td><td class="expl">Gunicorn = serveur Python WSGI qui exécute Django. Nginx = reverse proxy en frontal qui reçoit les requêtes HTTP et les forward à Gunicorn. Django seul ne gère pas les connexions réseau en prod.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     RAFAEL
+═══════════════════════════════════════════════ -->
+<div class="section" id="rafael">
+  <div class="section-tag tag-other">🔵 Rafael</div>
+  <h2>Ce que Rafael a fait (résumé à connaître)</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">views.py — <span>import_csv() + releve_etudiant()</span></span>
+    </div>
+    <div class="code-body">
+      <table class="code-table">
+        <tr><td class="ln">—</td><td class="code"><span class="kw">import</span> csv, io</td><td class="expl">Modules Python standard pour lire des fichiers CSV.</td></tr>
+        <tr><td class="ln">—</td><td class="code">csv_file.read().decode(<span class="str">'utf-8'</span>)</td><td class="expl">Le fichier uploadé est en bytes. <code>.decode('utf-8')</code> le convertit en texte lisible.</td></tr>
+        <tr><td class="ln">—</td><td class="code">csv.DictReader(io.StringIO(data))</td><td class="expl">Lit le CSV ligne par ligne en dictionnaires Python. Clés = les en-têtes de colonnes du CSV.</td></tr>
+        <tr><td class="ln">—</td><td class="code">Note.objects.update_or_create(...)</td><td class="expl"><span class="tag tag-key">KEY</span> Si la note existe déjà pour cet étudiant+examen → UPDATE. Sinon → INSERT. Évite les doublons.</td></tr>
+        <tr><td class="ln">—</td><td class="code">releve_etudiant() — moyennes pondérées</td><td class="expl">Calcul : Σ(note × coef_examen) / Σ(coef_examen) par ressource, puis Σ(moy_ressource × coef_ressource) / Σ(coef_ressource) par UE. <code>select_related()</code> charge tout en une requête SQL avec JOIN.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     QUESTIONS
+═══════════════════════════════════════════════ -->
+<div class="section" id="qa">
+  <h2>Questions probables du prof</h2>
+  <p class="subtitle">Clique sur chaque question pour voir la réponse.</p>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>C'est quoi <code>get_object_or_404</code> ? Pourquoi tu l'utilises ?</p>
+    </div>
+    <div class="qa-a">C'est une fonction Django qui cherche un objet en base. Si il existe, elle le retourne. Si il n'existe pas (ex: l'URL /etudiants/99999/ mais cet étudiant n'est pas en base), elle renvoie automatiquement une réponse HTTP 404. Ça évite d'avoir un try/except ou un crash du serveur. Sans ça, <code>Etudiant.objects.get(pk=pk)</code> lancerait une exception <code>DoesNotExist</code> qui planterait la page avec une erreur 500.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi <code>blank=True, null=True</code> sur le champ photo ?</p>
+    </div>
+    <div class="qa-a"><code>blank=True</code> dit que le champ est optionnel dans les formulaires Django (validation). <code>null=True</code> dit que la colonne peut stocker NULL en base SQL. Les deux sont nécessaires : sans <code>blank=True</code> le formulaire refuserait qu'on soumette sans photo. Sans <code>null=True</code> Django mettrait une chaîne vide "" en base, ce qui est problématique pour un champ fichier.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Explique le <code>Q()</code> dans la recherche.</p>
+    </div>
+    <div class="qa-a"><code>Q()</code> permet de construire des conditions SQL complexes avec OR et AND. Normalement <code>filter()</code> ne fait que du AND. Avec <code>Q(nom__icontains=x) | Q(prenom__icontains=x)</code> on fait : WHERE nom LIKE '%x%' OR prenom LIKE '%x%'. Le <code>|</code> = OR, le <code>&</code> = AND. Le <code>__icontains</code> = LIKE insensible à la casse.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi la suppression se fait sur POST et pas sur GET ?</p>
+    </div>
+    <div class="qa-a">Si on supprimait sur GET (simple lien), n'importe qui pourrait supprimer des données juste en visitant une URL. Un robot qui crawle le site, un utilisateur qui partage le lien, ou même Google qui indexe la page pourraient déclencher des suppressions. POST = action intentionnelle de l'utilisateur via un formulaire. C'est une règle de sécurité web de base : GET = lecture, POST/PUT/DELETE = modification.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>C'est quoi la différence entre <code>instance=etudiant</code> et pas d'instance ?</p>
+    </div>
+    <div class="qa-a">Sans <code>instance</code> : <code>EtudiantForm(request.POST)</code> = Django crée un nouvel objet en base (INSERT). Le formulaire est vide au départ. Avec <code>instance=etudiant</code> : <code>EtudiantForm(request.POST, instance=etudiant)</code> = Django modifie l'objet existant (UPDATE). Le formulaire est pré-rempli avec les valeurs actuelles. C'est la seule vraie différence entre <code>creer()</code> et <code>modifier()</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi <code>enctype="multipart/form-data"</code> ?</p>
+    </div>
+    <div class="qa-a">C'est un attribut HTML obligatoire pour envoyer des fichiers via un formulaire. Par défaut un formulaire envoie les données encodées en URL (texte). Avec <code>multipart/form-data</code>, le navigateur encode les fichiers binaires (photos) et les envoie en plusieurs parties. Sans ça, <code>request.FILES</code> serait vide côté Django, la photo ne serait jamais reçue.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>C'est quoi <code>{% csrf_token %}</code> ?</p>
+    </div>
+    <div class="qa-a">Protection contre les attaques CSRF (Cross-Site Request Forgery). Django génère un token secret unique par session et l'intègre dans chaque formulaire. Quand le formulaire est soumis, Django vérifie que le token correspond. Si un site malveillant essaie de soumettre un formulaire à ta place, il ne connaît pas le token → Django rejette la requête. Sans <code>{% csrf_token %}</code>, Django retourne une erreur 403 Forbidden sur tous les formulaires POST.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>Pourquoi la PK des étudiants est une string et celle des enseignants un int ?</p>
+    </div>
+    <div class="qa-a">Pour les étudiants : on utilise le vrai numéro étudiant comme identifiant (ex: "22015487"). C'est un CharField, donc <code>&lt;str:pk&gt;</code> dans les URLs. Pour les enseignants : il n'y a pas de numéro identifiant naturel, donc on laisse Django créer un id auto-incrémenté (1, 2, 3...). C'est un AutoField entier, donc <code>&lt;int:pk&gt;</code> dans les URLs. C'est pour ça que les deux fichiers d'URLs ont des types différents.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>C'est quoi le HOST 'serveur-notes' dans settings.py ?</p>
+    </div>
+    <div class="qa-a">"serveur-notes" est le nom DNS de la machine où tourne MySQL sur le réseau. Django (application web) est sur une machine, la base de données MySQL est sur une autre machine (celle de Hussain). C'est ce qu'on appelle une architecture avec service web et DB séparés. Django se connecte à MySQL via le réseau sur le port 3306, comme si c'était un serveur distant.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q" onclick="toggle(this)">
+      <span class="qa-icon">Q</span>
+      <p>C'est quoi les migrations ?</p>
+    </div>
+    <div class="qa-a">Les migrations sont des fichiers Python générés par Django (<code>python manage.py makemigrations</code>) qui décrivent les changements de la structure de la base de données. <code>python manage.py migrate</code> les applique : il crée ou modifie les tables SQL en fonction des modèles Python. C'est comme un historique de versions pour le schéma de la base. Le fichier <code>0001_initial.py</code> dans le projet crée toutes les tables au premier lancement.</div>
+  </div>
+
+</div>
+
+</main>
+</div>
+
+<script>
+function toggle(el) {
+  const answer = el.nextElementSibling;
+  answer.classList.toggle('open');
+}
+</script>
+</body>
+</html>
